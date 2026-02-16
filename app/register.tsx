@@ -1,7 +1,64 @@
 // register.tsx
-import { ScrollView, StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { BASE_URL } from '@/config';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { Alert, ScrollView, StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function RegisterScreen() {
+
+    const router = useRouter();
+    const [showPassword, setShowPassword] = useState(false);
+    const [fullName, setFullName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleRegister = async () => {
+        if (!fullName || !email || !phone || !password || !confirmPassword) {
+            alert("Please fill all the fields");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            alert("Passwords do not match");
+            return;
+        }
+
+        try {
+            setLoading(true);
+
+            const response = await fetch(`${BASE_URL}/api/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    fullName,
+                    email,
+                    phone,
+                    password
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.log("Backend error:", data);
+                return Alert.alert('Error', data.message);
+            }
+
+            Alert.alert('Success', 'Account created successfully!');
+            router.replace('/login');
+
+        } catch (error) {
+            console.log("Fetch error:", error);
+            alert("Registration failed. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    }
     return (
         <View className="flex-1 bg-slate-50">
 
@@ -41,6 +98,8 @@ export default function RegisterScreen() {
                         className="border-b border-slate-200 py-2 text-slate-900 text-base"
                         placeholder="Enter your full name"
                         placeholderTextColor="#94a3b8"
+                        value={fullName}
+                        onChangeText={setFullName}
                     />
                 </View>
 
@@ -55,8 +114,12 @@ export default function RegisterScreen() {
                         placeholderTextColor="#94a3b8"
                         keyboardType="email-address"
                         autoCapitalize="none"
+                        value={email}
+                        onChangeText={setEmail}
                     />
                 </View>
+
+
 
                 {/* Phone Number */}
                 <View className="mb-4">
@@ -68,6 +131,8 @@ export default function RegisterScreen() {
                         placeholder="Enter your phone number"
                         placeholderTextColor="#94a3b8"
                         keyboardType="phone-pad"
+                        value={phone}
+                        onChangeText={setPhone}
                     />
                 </View>
 
@@ -82,8 +147,10 @@ export default function RegisterScreen() {
                             placeholder="Enter your password"
                             placeholderTextColor="#94a3b8"
                             secureTextEntry={true}
+                            value={password}
+                            onChangeText={setPassword}
                         />
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)} activeOpacity={0.6}    >
                             <Text className="text-slate-400 text-lg px-2">👁</Text>
                         </TouchableOpacity>
                     </View>
@@ -100,6 +167,8 @@ export default function RegisterScreen() {
                             placeholder="Enter your password again"
                             placeholderTextColor="#94a3b8"
                             secureTextEntry={true}
+                            value={confirmPassword}
+                            onChangeText={setConfirmPassword}
                         />
                         <TouchableOpacity>
                             <Text className="text-slate-400 text-lg px-2">👁</Text>
@@ -108,7 +177,7 @@ export default function RegisterScreen() {
                 </View>
 
                 {/* Create Account Button */}
-                <TouchableOpacity
+                <TouchableOpacity onPress={handleRegister} disabled={loading}
                     className="bg-blue-500 rounded-2xl py-3 items-center mb-4"
                 >
                     <Text className="text-white text-base font-bold tracking-widest uppercase">
@@ -119,13 +188,13 @@ export default function RegisterScreen() {
                 {/* Sign In Link */}
                 <View className="flex-row justify-center mb-4">
                     <Text className="text-slate-400 text-sm">Already have an account? </Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => router.push('/login')} activeOpacity={0.6}>
                         <Text className="text-blue-500 text-sm font-semibold">Sign In</Text>
                     </TouchableOpacity>
                 </View>
-            </ScrollView>
+            </ScrollView >
 
 
-        </View>
+        </View >
     );
 }
