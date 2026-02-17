@@ -1,7 +1,8 @@
 // welcome.tsx
+import { useRouter } from 'expo-router';
 import { StatusBar, Text, TouchableOpacity, View } from 'react-native';
-
 export default function WelcomeScreen() {
+    const router = useRouter();
     return (
         <View className="flex-1 bg-slate-50 justify-between px-8 py-20">
 
@@ -45,8 +46,10 @@ export default function WelcomeScreen() {
                 <TouchableOpacity
                     className="bg-blue-500 rounded-2xl py-4 items-center shadow-sm"
                     activeOpacity={0.8}
+                    onPress={() => router.push("/register")}
                 >
-                    <Text className="text-white text-base font-bold tracking-widest uppercase">
+                    <Text className="text-white text-base font-bold tracking-widest uppercase"
+                    >
                         Sign In
                     </Text>
                 </TouchableOpacity>
@@ -55,6 +58,7 @@ export default function WelcomeScreen() {
                 <TouchableOpacity
                     className="border border-slate-300 rounded-2xl py-4 items-center"
                     activeOpacity={0.8}
+                    onPress={() => router.push("/login")}
                 >
                     <Text className="text-slate-600 text-base font-semibold tracking-widest uppercase">
                         Create Account
