@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Linking, ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 
@@ -15,12 +16,13 @@ export default function AboutUsScreen() {
 
             {/*  Logo */}
             <View className="items-center pt-16 pb-10">
-                <TouchableOpacity
+
+                {/* Back Button */}<TouchableOpacity
                     onPress={() => router.back()}
                     className="absolute left-6 top-4 w-10 h-10 rounded-full border border-slate-200 bg-white items-center justify-center"
                     activeOpacity={0.7}
                 >
-                    <Text className="text-slate-600 text-lg">←</Text>
+                    <Ionicons name="arrow-back" size={18} color="#475569" />
                 </TouchableOpacity>
 
                 <Text className="text-slate-400 text-xs font-semibold tracking-[4px] mb-4 uppercase">

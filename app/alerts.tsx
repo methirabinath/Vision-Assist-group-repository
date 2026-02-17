@@ -1,6 +1,9 @@
-import { ScrollView, StatusBar, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 
 export default function AlertsScreen() {
+    const router = useRouter();
     return (
         <View className="flex-1 bg-slate-50">
 
@@ -8,6 +11,15 @@ export default function AlertsScreen() {
 
             {/* Top Section: Logo */}
             <View className="items-center pt-16 pb-10">
+
+                {/* Back Button */}
+                <TouchableOpacity
+                    onPress={() => router.back()}
+                    className="absolute left-6 top-4 w-10 h-10 rounded-full border border-slate-200 bg-white items-center justify-center"
+                    activeOpacity={0.7}
+                >
+                    <Ionicons name="arrow-back" size={18} color="#475569" />
+                </TouchableOpacity>
 
                 <Text className="text-slate-400 text-xs font-semibold tracking-[4px] mb-4 uppercase">
                     Monitoring
