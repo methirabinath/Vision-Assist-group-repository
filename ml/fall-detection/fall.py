@@ -1,8 +1,13 @@
 #Fall Detection System 
 #Author : Sinethma Pathirage 
 
+
+
+
 import time
 import math
+
+
 
 # =========================================================
 # SAFE SMBUS IMPORT (HARDWARE / SIMULATION MODE)
@@ -160,7 +165,6 @@ while True:
             impact_time = None
 
     time.sleep(0.2)
-
 
 
 
