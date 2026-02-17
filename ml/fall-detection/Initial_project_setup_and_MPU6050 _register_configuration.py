@@ -50,3 +50,8 @@ while True:
 
     print(f"Ax:{ax:.2f} Ay:{ay:.2f} Az:{az:.2f} | GyroZ:{gz:.2f}")
     time.sleep(0.5)
+
+    from gpiozero import Buzzer
+
+buzzer = Buzzer(18)
+
