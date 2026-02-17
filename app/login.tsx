@@ -1,8 +1,57 @@
 // login.tsx
+import { BASE_URL } from '@/config';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function LoginScreen() {
+
+    const router = useRouter();
+    const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleLogin = async () => {
+        if (!email || !password) {
+            alert("Please fill all the fields");
+            return;
+        }
+
+        try {
+            setLoading(true);
+
+            const response = await fetch(`${BASE_URL}/api/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email,
+                    password
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                alert(data.message);
+                setLoading(false);
+                return;
+            }
+
+            alert("Login successful");
+            setLoading(false);
+            router.push('/');
+
+        } catch (error) {
+            console.log(error);
+            setLoading(false);
+        }
+    }
     return (
+
+
         <View className="flex-1 bg-slate-50">
 
             <StatusBar barStyle="dark-content" />
@@ -40,6 +89,8 @@ export default function LoginScreen() {
                         placeholderTextColor="#94a3b8"
                         keyboardType="email-address"
                         autoCapitalize="none"
+                        value={email}
+                        onChangeText={setEmail}
                     />
                 </View>
 
@@ -54,8 +105,10 @@ export default function LoginScreen() {
                             placeholder="Enter your password"
                             placeholderTextColor="#94a3b8"
                             secureTextEntry={true}
+                            value={password}
+                            onChangeText={setPassword}
                         />
-                        <TouchableOpacity activeOpacity={0.6}>
+                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)} activeOpacity={0.6}>
                             <Text className="text-slate-400 text-lg px-2">👁</Text>
                         </TouchableOpacity>
                     </View>
@@ -72,6 +125,8 @@ export default function LoginScreen() {
                 <TouchableOpacity
                     className="bg-blue-500 rounded-2xl py-4 items-center mb-6"
                     activeOpacity={0.8}
+                    disabled={loading}
+                    onPress={handleLogin}
                 >
                     <Text className="text-white text-base font-bold tracking-widest uppercase">
                         Sign In
@@ -81,7 +136,7 @@ export default function LoginScreen() {
                 {/* Sign Up Link */}
                 <View className="flex-row justify-center">
                     <Text className="text-slate-400 text-sm">Don't have an account? </Text>
-                    <TouchableOpacity activeOpacity={0.6}>
+                    <TouchableOpacity onPress={() => router.push("/register")} activeOpacity={0.6}>
                         <Text className="text-blue-500 text-sm font-semibold">Sign Up</Text>
                     </TouchableOpacity>
                 </View>
