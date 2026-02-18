@@ -1,5 +1,12 @@
+from gpiozero import Buzzer
+
+buzzer = Buzzer(18)
+
+
+
 import time
 import math
+
 
 try:
     import smbus
@@ -54,6 +61,11 @@ while True:
 
     print(f"Ax:{ax:.2f} Ay:{ay:.2f} Az:{az:.2f} | GyroZ:{gz:.2f}")
     time.sleep(0.5)
+
+def calculate_tilt(ax, ay, az):
+    roll = math.atan2(ay, az) * 57.3
+    pitch = math.atan2(-ax, math.sqrt(ay * ay + az * az)) * 57.3
+    return roll, pitch
 
 
 
