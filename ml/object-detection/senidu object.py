@@ -1,13 +1,22 @@
+
+
+
+
+
+
+
+
+
+
+
 from ultralytics import YOLO
 import cv2
 import pyttsx3
 import time
 
-# =========================
-# SETTINGS (you can change)
-# =========================
 IMG_W, IMG_H = 320, 240
 YOLO_IMGSZ = 320
+DETECT_EVERY = 3
 CONF_THRES = 0.55
 COOLDOWN = 2.0
 
@@ -17,18 +26,32 @@ engine.setProperty("rate", 160)
 model = YOLO("yolov8n.pt")
 
 cap = cv2.VideoCapture(0)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, IMG_W)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, IMG_H)
+cap.set(cv2.CAP_PROP_FPS, 30)
+
 if not cap.isOpened():
     print("Camera not opened")
     exit()
 
 last_spoken_time = 0
 last_label = None
+frame_count = 0
 
 print("Running object detection with speech. Press Q to quit.")
 
 while True:
     ret, frame = cap.read()
     if not ret:
+        continue
+
+    frame_count += 1
+
+    # Skip frames to reduce load
+    if frame_count % DETECT_EVERY != 0:
+        cv2.imshow("YOLO + Speech", frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
         continue
 
     results = model(frame, imgsz=YOLO_IMGSZ, verbose=False)
