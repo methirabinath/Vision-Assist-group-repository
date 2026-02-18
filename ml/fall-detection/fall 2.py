@@ -48,5 +48,13 @@ def get_gyroscope():
     return gx, gy, gz
 
 
+while True:
+    ax, ay, az = get_acceleration()
+    gx, gy, gz = get_gyroscope()
+
+    print(f"Ax:{ax:.2f} Ay:{ay:.2f} Az:{az:.2f} | GyroZ:{gz:.2f}")
+    time.sleep(0.5)
+
+
 
 
