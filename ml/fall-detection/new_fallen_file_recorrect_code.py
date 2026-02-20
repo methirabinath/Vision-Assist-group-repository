@@ -42,3 +42,10 @@ def get_acceleration():
         ax, ay, az = 0.0, 0.0, 1.0
 
     return ax, ay, az
+
+def get_gyroscope():
+    gx = read_raw_data(GYRO_XOUT_H) / 131.0
+    gy = read_raw_data(GYRO_XOUT_H + 2) / 131.0
+    gz = read_raw_data(GYRO_XOUT_H + 4) / 131.0
+
+    return gx, gy, gz
