@@ -62,3 +62,18 @@ RESET_TIME = 5
 
 impact_time = None
 fall_state = False
+print("IMU Fall Detection & Head Tracking Module Started...")
+
+while True:
+    ax, ay, az = get_acceleration()
+    gx, gy, gz = get_gyroscope()
+
+    acc_mag = math.sqrt(ax * ax + ay * ay + az * az)
+    roll, pitch = calculate_tilt(ax, ay, az)
+
+    print(
+        f"Acc:{acc_mag:.2f}g | "
+        f"Roll:{roll:.1f}° | "
+        f"Pitch:{pitch:.1f}° | "
+        f"GyroZ:{gz:.1f}"
+    )
