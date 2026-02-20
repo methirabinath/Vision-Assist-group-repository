@@ -20,3 +20,16 @@ GYRO_XOUT_H = 0x43
 if HARDWARE_AVAILABLE:
     bus = smbus.SMBus(1)
     bus.write_byte_data(MPU_ADDR, PWR_MGMT_1, 0)
+
+def read_raw_data(addr):
+    if not HARDWARE_AVAILABLE:
+        return 0
+
+    high = bus.read_byte_data(MPU_ADDR, addr)
+    low = bus.read_byte_data(MPU_ADDR, addr + 1)
+    value = (high << 8) | low
+
+    if value > 32768:
+        value -= 65536
+
+    return value
