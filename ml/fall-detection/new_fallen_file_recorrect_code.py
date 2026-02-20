@@ -54,3 +54,11 @@ def calculate_tilt(ax, ay, az):
     roll = math.atan2(ay, az) * 57.3
     pitch = math.atan2(-ax, math.sqrt(ay * ay + az * az)) * 57.3
     return roll, pitch
+
+IMPACT_THRESHOLD = 2.5
+TILT_THRESHOLD = 45
+INACTIVITY_TIME = 2.5
+RESET_TIME = 5
+
+impact_time = None
+fall_state = False
