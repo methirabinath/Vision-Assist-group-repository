@@ -78,12 +78,7 @@ export default function Sidebar() {
     const menuItems = [
         { label: "Dashboard", href: "/admin", icon: <Icons.Dashboard /> },
         { label: "User Management", href: "/admin/users", icon: <Icons.Users /> },
-        {
-            label: "Transactions",
-            href: "/admin/payments",
-            icon: <Icons.Payments />,
-        },
-        { label: "Settings", href: "/admin/settings", icon: <Icons.Settings /> },
+        { label: "My Account", href: "/admin/settings", icon: <Icons.Settings /> },
     ];
 
     return (
