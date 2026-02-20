@@ -6,12 +6,17 @@ import time
 import math
 
 
+
+
 # =========================================================
 # SAFE SMBUS IMPORT (HARDWARE / SIMULATION MODE)
 # =========================================================
+
+
 try:
-    import smbus
-    HARDWARE_AVAILABLE = True
+ 
+ import smbus 
+ HARDWARE_AVAILABLE = True
 except ModuleNotFoundError:
     HARDWARE_AVAILABLE = False
     print("⚠ SMBus not found – Running in simulation mode")
