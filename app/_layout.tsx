@@ -7,7 +7,7 @@ export default function Layout() {
   const pathname = usePathname();
 
   //  BottomNav should not appear
-  const hideBottomNav = ['/login', '/register', '/welcomeScreen', '/openVoice',];
+  const hideBottomNav = ['/login', '/register', '/welcomeScreen', '/openVoice', '/splashScreen'];
 
   return (
     <View style={{ flex: 1 }}>
