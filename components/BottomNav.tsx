@@ -6,7 +6,8 @@ export default function BottomNav() {
     const router = useRouter();
     const pathname = usePathname();
 
-    const isActive = (path: string) => pathname === path;
+    const isActive = (path: string) => pathname !== null && pathname === path;
+
 
     const iconColor = (path: string) => (isActive(path) ? '#2563eb' : '#6b7280');
     const textStyle = (path: string) =>
@@ -54,13 +55,13 @@ export default function BottomNav() {
                 {/* Account */}
                 <TouchableOpacity
                     className="items-center py-3 px-4"
+                    onPress={() => router.push('/account')}
                 >
                     <View className="w-12 h-12 items-center justify-center">
                         <Ionicons name="person-outline" size={26} color={iconColor('/account')} />
                     </View>
                     <Text className={`text-xs mt-1 ${textStyle('/account')}`}>Account</Text>
                 </TouchableOpacity>
-
             </View>
         </View>
     );
