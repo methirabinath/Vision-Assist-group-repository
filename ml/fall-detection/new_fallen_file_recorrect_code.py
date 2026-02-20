@@ -33,3 +33,12 @@ def read_raw_data(addr):
         value -= 65536
 
     return value
+def get_acceleration():
+    ax = read_raw_data(ACCEL_XOUT_H) / 16384.0
+    ay = read_raw_data(ACCEL_XOUT_H + 2) / 16384.0
+    az = read_raw_data(ACCEL_XOUT_H + 4) / 16384.0
+
+    if not HARDWARE_AVAILABLE:
+        ax, ay, az = 0.0, 0.0, 1.0
+
+    return ax, ay, az
