@@ -49,3 +49,8 @@ def get_gyroscope():
     gz = read_raw_data(GYRO_XOUT_H + 4) / 131.0
 
     return gx, gy, gz
+
+def calculate_tilt(ax, ay, az):
+    roll = math.atan2(ay, az) * 57.3
+    pitch = math.atan2(-ax, math.sqrt(ay * ay + az * az)) * 57.3
+    return roll, pitch
