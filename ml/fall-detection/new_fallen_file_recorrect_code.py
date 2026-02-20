@@ -77,3 +77,7 @@ while True:
         f"Pitch:{pitch:.1f}° | "
         f"GyroZ:{gz:.1f}"
     )
+    if acc_mag > IMPACT_THRESHOLD and not fall_state:
+       impact_time = time.time()
+       fall_state = True
+       print("⚠ Impact detected")
