@@ -15,28 +15,45 @@ export default function AboutUsScreen() {
             <StatusBar barStyle="dark-content" />
 
             {/*  Logo */}
-            <View className="items-center pt-16 pb-10">
+            <View className="pt-14 pb-8 px-6">
 
-                {/* Back Button */}<TouchableOpacity
-                    onPress={() => router.back()}
-                    className="absolute left-6 top-4 w-10 h-10 rounded-full border border-slate-200 bg-white items-center justify-center"
-                    activeOpacity={0.7}
-                >
-                    <Ionicons name="arrow-back" size={18} color="#475569" />
-                </TouchableOpacity>
+                {/* Header Row */}
+                <View className="flex-row items-center justify-between mb-6">
 
-                <Text className="text-slate-400 text-xs font-semibold tracking-[4px] mb-4 uppercase">
-                    Learn More
-                </Text>
+                    {/* Back Button */}
+                    <TouchableOpacity
+                        onPress={() => router.back()}
+                        className="w-10 h-10 rounded-full border border-slate-200 bg-white items-center justify-center"
+                        activeOpacity={0.7}
+                    >
+                        <Ionicons name="arrow-back" size={18} color="#475569" />
+                    </TouchableOpacity>
 
-                <Text className="text-slate-900 text-5xl font-bold tracking-tight">
-                    Vision<Text className="text-blue-500">Assist</Text>
-                </Text>
+                    {/* Learn More Title */}
+                    <Text className="text-slate-400 text-xs font-semibold tracking-[4px] uppercase">
+                        Learn More
+                    </Text>
 
-                <View className="w-12 h-0.5 bg-blue-500 mt-5 mb-5" />
-                <Text className="text-slate-400 text-sm tracking-widest font-medium uppercase">
-                    Smart Vision. Smart Living.
-                </Text>
+                    {/* Spacer for symmetry */}
+                    <View className="w-10" />
+
+                </View>
+
+                {/* Logo Section */}
+                <View className="items-center">
+
+                    <Text className="text-slate-900 text-5xl font-bold tracking-tight">
+                        Vision<Text className="text-blue-500">Assist</Text>
+                    </Text>
+
+                    <View className="w-12 h-0.5 bg-blue-500 mt-5 mb-5" />
+
+                    <Text className="text-slate-400 text-sm tracking-widest font-medium uppercase">
+                        Smart Vision. Smart Living.
+                    </Text>
+
+                </View>
+
             </View>
 
             {/* Content Card */}

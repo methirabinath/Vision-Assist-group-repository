@@ -150,9 +150,6 @@ export default function RegisterScreen() {
                             value={password}
                             onChangeText={setPassword}
                         />
-                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)} activeOpacity={0.6}    >
-                            <Text className="text-slate-400 text-lg px-2">👁</Text>
-                        </TouchableOpacity>
                     </View>
                 </View>
 
@@ -170,9 +167,7 @@ export default function RegisterScreen() {
                             value={confirmPassword}
                             onChangeText={setConfirmPassword}
                         />
-                        <TouchableOpacity>
-                            <Text className="text-slate-400 text-lg px-2">👁</Text>
-                        </TouchableOpacity>
+
                     </View>
                 </View>
 
