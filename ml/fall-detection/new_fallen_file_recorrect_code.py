@@ -95,3 +95,5 @@ while True:
         elif elapsed > RESET_TIME:
            fall_state = False
            impact_time = None
+
+           time.sleep(0.2)
