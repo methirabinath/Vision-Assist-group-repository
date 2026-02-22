@@ -81,3 +81,17 @@ while True:
        impact_time = time.time()
        fall_state = True
        print("⚠ Impact detected")
+
+    if fall_state and impact_time is not None:
+        elapsed = time.time() - impact_time
+
+        if elapsed > INACTIVITY_TIME and abs(pitch) > TILT_THRESHOLD:
+           print("🚨 FALL CONFIRMED!")
+           print("Triggering emergency alert to caregiver...")
+           time.sleep(3)
+           fall_state = False
+           impact_time = None
+
+        elif elapsed > RESET_TIME:
+           fall_state = False
+           impact_time = None
