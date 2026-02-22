@@ -1,9 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function HelpSupportScreen() {
     const router = useRouter();
+    const insets = useSafeAreaInsets();
 
     return (
         <View className="flex-1 bg-slate-50">
@@ -56,6 +58,9 @@ export default function HelpSupportScreen() {
             <ScrollView
                 className="flex-1 bg-white rounded-t-3xl px-8 pt-10"
                 showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                    paddingBottom: insets.bottom + 120
+                }}
             >
 
                 {/* Page Title */}

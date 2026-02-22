@@ -2,8 +2,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import { Alert, Animated, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SOSAlertScreen() {
+    const insets = useSafeAreaInsets();
     const router = useRouter();
     const [isPressed, setIsPressed] = useState(false);
     const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -149,7 +151,12 @@ export default function SOSAlertScreen() {
             </View>
 
             {/* Footer */}
-            <View className="pb-8 px-6">
+            <View
+                className="px-6"
+                style={{
+                    paddingBottom: insets.bottom + 20
+                }}
+            >
                 <View className="bg-gray-50 rounded-2xl p-4">
                     <View className="flex-row items-center justify-center">
                         <Ionicons name="shield-checkmark-outline" size={20} color="#6b7280" />

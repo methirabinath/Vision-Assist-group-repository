@@ -1,8 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Linking, ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function AboutUsScreen() {
+    const insets = useSafeAreaInsets();
     const router = useRouter();
 
     // Function to open external URL
@@ -60,6 +62,9 @@ export default function AboutUsScreen() {
             <ScrollView
                 className="flex-1 bg-white rounded-t-3xl px-8 pt-10"
                 showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                    paddingBottom: insets.bottom + 100
+                }}
             >
                 {/* About Us heading */}
                 <Text className="text-slate-900 text-2xl font-bold tracking-tight mb-1">

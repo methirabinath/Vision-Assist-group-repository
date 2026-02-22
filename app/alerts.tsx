@@ -1,8 +1,9 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StatusBar, Text, View } from 'react-native';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function AlertsScreen() {
+    const insets = useSafeAreaInsets();
     const router = useRouter();
     return (
         <View className="flex-1 bg-slate-50">
@@ -13,24 +14,11 @@ export default function AlertsScreen() {
             <View className="pt-14 pb-8 px-6">
 
                 {/* Header Row */}
-                <View className="flex-row items-center justify-between mb-6">
+                <View className="items-center mb-6">
 
-                    {/* Back Button */}
-                    <TouchableOpacity
-                        onPress={() => router.back()}
-                        className="w-10 h-10 rounded-full border border-slate-200 bg-white items-center justify-center"
-                        activeOpacity={0.7}
-                    >
-                        <Ionicons name="arrow-back" size={18} color="#475569" />
-                    </TouchableOpacity>
-
-                    {/* Monitoring Title */}
                     <Text className="text-slate-400 text-xs font-semibold tracking-[4px] uppercase">
                         Monitoring
                     </Text>
-
-                    {/* Spacer */}
-                    <View className="w-10" />
 
                 </View>
 
@@ -55,6 +43,9 @@ export default function AlertsScreen() {
             <ScrollView
                 className="flex-1 bg-white rounded-t-3xl px-8 pt-10"
                 showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                    paddingBottom: insets.bottom + 120
+                }}
             >
 
                 {/* Page Title */}
