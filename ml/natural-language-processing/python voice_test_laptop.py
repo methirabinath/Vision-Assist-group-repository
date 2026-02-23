@@ -41,6 +41,15 @@ def handle_command(text):
     if "help" in text:
         speak("Emergency alert activated")
 
+    elif "Hey Vision" in text:
+        speak("Hello User !")
+
+    elif "Check Wheather" in text:
+        speak("It will rain nearly")
+
+    elif "Log me out" in text:
+        speak("Logged out successfully")
+        
     elif "guide" in text or "navigate" in text or "home" in text:
         speak("Starting navigation")
 
