@@ -47,6 +47,9 @@ def handle_command(text):
     elif "stop" in text:
         speak("Stopping navigation")
 
+    elif "To where" in text:
+        speak("Back to location")
+
     elif "where am i" in text or "location" in text:
         speak("Getting your location")
 
@@ -86,3 +89,7 @@ def main():
 # -----------------------------
 if __name__ == "__main__":
     main()
+
+
+
+    
