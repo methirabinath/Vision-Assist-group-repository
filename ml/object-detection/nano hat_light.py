@@ -3,6 +3,10 @@
 
 
 
+
+
+
+
 # hat_light_pro.py
 # Version 1 – Smooth preview + throttled YOLO
 

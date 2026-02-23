@@ -1,82 +1,51 @@
+# hat_light_pro.py
+# Version 1 – Smooth preview + throttled YOLO
+
 from ultralytics import YOLO
 import cv2
-import time
-import pyttsx3
-import threading
-import queue
 
-IMG_W, IMG_H = 320, 240
-YOLO_IMGSZ = 320
-DETECT_EVERY = 3
-CONF_THRES = 0.55
-COOLDOWN = 2.0
-
-# =========================
-# SPEECH THREAD (non-blocking)
-# =========================
-speech_q = queue.Queue()
-
-def speech_worker():
-    engine = pyttsx3.init(driverName="espeak")
-    engine.setProperty("rate", 160)
-    while True:
-        text = speech_q.get()
-        if text is None:
-            break
-        engine.say(text)
-        engine.runAndWait()
-        speech_q.task_done()
-
-threading.Thread(target=speech_worker, daemon=True).start()
+CAM_W, CAM_H = 320, 240
+CAM_FPS = 30
+IMG_SZ = 160
+RUN_YOLO_EVERY = 3
+SHOW_WINDOW = True
 
 model = YOLO("yolov8n.pt")
 
 cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, IMG_W)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, IMG_H)
-cap.set(cv2.CAP_PROP_FPS, 30)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAM_W)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, CAM_H)
+cap.set(cv2.CAP_PROP_FPS, CAM_FPS)
 
 if not cap.isOpened():
     print("Camera not opened")
-    exit()
+    raise SystemExit(1)
 
-last_spoken_time = 0
-last_label = None
-frame_count = 0
+frame_i = 0
+last_annotated = None
 
-print("FAST YOLO running. Press Q to quit.")
+print("Running YOLO smooth mode...")
 
 while True:
     ret, frame = cap.read()
     if not ret:
         continue
 
-    frame_count += 1
-    if frame_count % DETECT_EVERY != 0:
-        cv2.imshow("FAST YOLO", frame)
+    frame_i += 1
+
+    # Always show raw camera
+    if SHOW_WINDOW:
+        cv2.imshow("Camera", frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-        continue
 
-    results = model(frame, imgsz=YOLO_IMGSZ, verbose=False)
+    # Run YOLO sometimes
+    if frame_i % RUN_YOLO_EVERY == 0:
+        results = model(frame, imgsz=IMG_SZ, verbose=False)
+        last_annotated = results[0].plot()
 
-    annotated = results[0].plot()
-    cv2.imshow("FAST YOLO", annotated)
-
-    if results[0].boxes is not None and len(results[0].boxes) > 0:
-        best = max(results[0].boxes, key=lambda b: float(b.conf[0]))
-        label = model.names[int(best.cls[0])]
-        conf = float(best.conf[0])
-
-        now = time.time()
-        if conf >= CONF_THRES and label != last_label and (now - last_spoken_time) >= COOLDOWN:
-            speech_q.put(label)
-            last_spoken_time = now
-            last_label = label
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    if SHOW_WINDOW and last_annotated is not None:
+        cv2.imshow("YOLO", last_annotated)
 
 cap.release()
 cv2.destroyAllWindows()
-speech_q.put(None)
