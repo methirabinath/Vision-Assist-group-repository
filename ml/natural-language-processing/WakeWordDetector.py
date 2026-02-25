@@ -29,4 +29,9 @@ class WakeWordDetector:
 
             if result >= 0:
                 print("Wake word detected!")
+
+                #Close mic before returning
+                self.audio_stream.close()
+                self.pa.terminate()
+
                 return True
