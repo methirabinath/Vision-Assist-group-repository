@@ -26,6 +26,10 @@ while True:
 
     # Wake word detection
     if wake.listen():
+
+        wake = WakeWordDetector()  # Reinitialize to reset audio stream
+        wake.listen()
+        
         command = stt.listen_command()
         response = cmd_processor.process(command)
         tts.speak(response)
