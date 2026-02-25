@@ -29,7 +29,10 @@ while True:
 
         wake = WakeWordDetector()  # Reinitialize to reset audio stream
         wake.listen()
-        
+        wake.stop()
+
+        print("Mic opened successfully")
+
         command = stt.listen_command()
         response = cmd_processor.process(command)
         tts.speak(response)

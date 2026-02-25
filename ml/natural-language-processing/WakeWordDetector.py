@@ -18,6 +18,17 @@ class WakeWordDetector:
             frames_per_buffer=self.porcupine.frame_length
         )
 
+
+    #Adding a stop method to close the audio stream and terminate PyAudio when done
+
+    def stop(self):
+        self.audio_stream.close()
+        self.pa.terminate()
+        
+    def stop(self):
+        self.audio_stream.close()
+        self.pa.terminate()
+
     def listen(self):
         print("Listening for wake word...")
 
