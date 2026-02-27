@@ -1,4 +1,3 @@
-// register.tsx
 import { BASE_URL } from '@/config';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -14,9 +13,10 @@ export default function RegisterScreen() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [role, setRole] = useState<"blindUser" | "caregiver" | null>(null);
 
     const handleRegister = async () => {
-        if (!fullName || !email || !phone || !password || !confirmPassword) {
+        if (!fullName || !email || !phone || !password || !confirmPassword || !role) {
             alert("Please fill all the fields");
             return;
         }
@@ -38,7 +38,9 @@ export default function RegisterScreen() {
                     fullName,
                     email,
                     phone,
-                    password
+                    role,
+                    password,
+
                 })
             });
 
@@ -136,6 +138,45 @@ export default function RegisterScreen() {
                     />
                 </View>
 
+                {/* Role Selection UI */}
+                <View className="mb-5">
+                    <Text className="text-slate-500 text-xs font-semibold tracking-widest uppercase mb-2">
+                        Select Role
+                    </Text>
+
+                    <View className="flex-row bg-slate-100 rounded-2xl p-1">
+
+                        {/* Blind User */}
+                        <TouchableOpacity
+                            onPress={() => setRole("blindUser")}
+                            className={`flex-1 py-3 rounded-xl items-center ${role === "blindUser" ? "bg-white shadow-sm" : ""
+                                }`}
+                        >
+                            <Text
+                                className={`font-semibold ${role === "blindUser" ? "text-blue-500" : "text-slate-500"
+                                    }`}
+                            >
+                                Blind User
+                            </Text>
+                        </TouchableOpacity>
+
+                        {/* Caregiver */}
+                        <TouchableOpacity
+                            onPress={() => setRole("caregiver")}
+                            className={`flex-1 py-3 rounded-xl items-center ${role === "caregiver" ? "bg-white shadow-sm" : ""
+                                }`}
+                        >
+                            <Text
+                                className={`font-semibold ${role === "caregiver" ? "text-blue-500" : "text-slate-500"
+                                    }`}
+                            >
+                                Caregiver
+                            </Text>
+                        </TouchableOpacity>
+
+                    </View>
+                </View>
+
                 {/* Password */}
                 <View className="mb-4">
                     <Text className="text-slate-500 text-xs font-semibold tracking-widest uppercase mb-1">
@@ -172,7 +213,7 @@ export default function RegisterScreen() {
                 </View>
 
                 {/* Create Account Button */}
-                <TouchableOpacity onPress={handleRegister} disabled={loading}
+                <TouchableOpacity
                     className="bg-blue-500 rounded-2xl py-3 items-center mb-4"
                 >
                     <Text className="text-white text-base font-bold tracking-widest uppercase">
@@ -183,8 +224,9 @@ export default function RegisterScreen() {
                 {/* Sign In Link */}
                 <View className="flex-row justify-center mb-4">
                     <Text className="text-slate-400 text-sm">Already have an account? </Text>
-                    <TouchableOpacity onPress={() => router.push('/login')} activeOpacity={0.6}>
+                    <TouchableOpacity onPress={() => router.push('/login')}>
                         <Text className="text-blue-500 text-sm font-semibold">Sign In</Text>
+
                     </TouchableOpacity>
                 </View>
             </ScrollView >
