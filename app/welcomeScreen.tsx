@@ -1,4 +1,4 @@
-// welcome.tsx
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar, Text, TouchableOpacity, View } from 'react-native';
 export default function WelcomeScreen() {
@@ -32,6 +32,12 @@ export default function WelcomeScreen() {
 
             </View>
 
+            <View className="items-center my-6">
+                <View className="w-40 h-40 bg-blue-600 rounded-2xl items-center justify-center overflow-hidden">
+                    <MaterialCommunityIcons name="hat-fedora" size={100} color="#ffffff" />
+                </View>
+            </View>
+
             {/*  Description */}
             <View className="items-center px-4">
                 <Text className="text-slate-500 text-base text-center leading-7">
@@ -46,7 +52,7 @@ export default function WelcomeScreen() {
                 <TouchableOpacity
                     className="bg-blue-500 rounded-2xl py-4 items-center shadow-sm"
                     activeOpacity={0.8}
-                    onPress={() => router.push("/register")}
+                    onPress={() => router.push("/login")}
                 >
                     <Text className="text-white text-base font-bold tracking-widest uppercase"
                     >
@@ -58,7 +64,7 @@ export default function WelcomeScreen() {
                 <TouchableOpacity
                     className="border border-slate-300 rounded-2xl py-4 items-center"
                     activeOpacity={0.8}
-                    onPress={() => router.push("/login")}
+                    onPress={() => router.push("/register")}
                 >
                     <Text className="text-slate-600 text-base font-semibold tracking-widest uppercase">
                         Create Account
