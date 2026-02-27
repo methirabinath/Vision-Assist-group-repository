@@ -1,20 +1,89 @@
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from 'expo-router';
-import { Image, ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect, useState } from "react";
+import { Image, ScrollView, StatusBar, Text, View } from 'react-native';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { BASE_URL } from '../config';
 
+
+interface User {
+    fullName?: string;
+    role?: string;
+    email?: string;
+    phone?: string;
+    createdAt?: string;
+}
 export default function UserProfile() {
+    const insets = useSafeAreaInsets();
     const router = useRouter();
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
 
-    // Placeholder user data
-    const user = {
-        fullName: "Senindu Jayasinghe",
-        email: "senindu@visionassist.com",
-        phone: "+94 70 345 6789",
-        role: "Caregiver",
-        photo: "",
-        deviceId: "#VAH-1023",
-        linkedSince: "January 2025",
+
+    const fetchUserProfile = async () => {
+        try {
+
+            // Check AsyncStorage for token
+            const token = await AsyncStorage.getItem("authToken");
+
+            console.log("🔍 Token found:", token ? "YES" : "NO");
+            console.log("Sending Token:", token);
+
+            if (!token) {
+                console.log("No token found - redirect to login");
+                router.replace("/login"); // Auto-redirect
+                return;
+            }
+
+            const response = await fetch(`${BASE_URL}/api/users/me`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.log("API Error:", data.message);
+                return;
+            }
+
+            console.log("✅ Profile loaded:", data.user.role);
+            setUser(data.user);
+
+        } catch (error) {
+            console.log("Profile fetch error:", error);
+        } finally {
+            setLoading(false);
+        }
     };
+
+
+    useEffect(() => {
+        fetchUserProfile();
+    }, []);
+
+    // Handle loading and error states
+    if (loading) {
+        return (
+            <View className="flex-1 justify-center items-center bg-slate-50">
+                <Text>Loading profile...</Text>
+            </View>
+        );
+    }
+
+    // If user data is not available, show an error message
+    if (!user) {
+        return (
+            <View className="flex-1 justify-center items-center bg-slate-50">
+                <Text>Profile not found</Text>
+            </View>
+        );
+    }
+
 
     return (
         <View className="flex-1 bg-slate-50">
@@ -23,14 +92,6 @@ export default function UserProfile() {
             {/* Top Section*/}
             <View className="items-center pt-16 pb-10">
 
-                {/* Back Button */}
-                <TouchableOpacity
-                    onPress={() => router.back()}
-                    className="absolute left-6 top-4 w-10 h-10 rounded-full border border-slate-200 bg-white items-center justify-center"
-                    activeOpacity={0.7}
-                >
-                    <Ionicons name="arrow-back" size={18} color="#475569" />
-                </TouchableOpacity>
 
                 <Text className="text-slate-400 text-xs font-semibold tracking-[4px] mb-4 uppercase">
                     Your Profile
@@ -52,23 +113,26 @@ export default function UserProfile() {
             <ScrollView
                 className="flex-1 bg-white rounded-t-3xl px-8 pt-10"
                 showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                    paddingBottom: insets.bottom + 100
+                }}
             >
 
                 {/* Profile Photo & Name */}
                 <View className="items-center mb-8">
                     <View className="relative">
                         <Image
-                            source={{ uri: user.photo || "https://www.gravatar.com/avatar/?d=mp&s=200" }}
+                            source={{ uri: "https://www.freeiconspng.com/uploads/account-icon-5.jpg" }}
                             className="w-24 h-24 rounded-2xl bg-slate-100"
                         />
                         <View className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-400 border-4 border-white rounded-full" />
                     </View>
                     <Text className="text-slate-900 text-2xl font-bold tracking-tight mt-4">
-                        {user.fullName}
+                        {user?.fullName}
                     </Text>
                     <View className="bg-blue-50 px-3 py-1 rounded-xl mt-2">
                         <Text className="text-blue-500 text-xs font-bold uppercase tracking-widest">
-                            {user.role}
+                            {user?.role}
                         </Text>
                     </View>
                 </View>
@@ -89,7 +153,7 @@ export default function UserProfile() {
                                 Email
                             </Text>
                             <Text className="text-slate-900 text-sm font-semibold">
-                                {user.email}
+                                {user?.email}
                             </Text>
                         </View>
                     </View>
@@ -105,7 +169,7 @@ export default function UserProfile() {
                                 Phone
                             </Text>
                             <Text className="text-slate-900 text-sm font-semibold">
-                                {user.phone}
+                                {user?.phone}
                             </Text>
                         </View>
                     </View>
@@ -123,14 +187,6 @@ export default function UserProfile() {
                         <View className="w-9 h-9 bg-blue-50 rounded-xl items-center justify-center mr-4">
                             <Ionicons name="hardware-chip-outline" size={18} color="#3b82f6" />
                         </View>
-                        <View className="flex-1">
-                            <Text className="text-slate-400 text-xs font-semibold tracking-widest uppercase mb-0.5">
-                                Device ID
-                            </Text>
-                            <Text className="text-slate-900 text-sm font-bold">
-                                {user.deviceId}
-                            </Text>
-                        </View>
                         <View className="flex-row items-center gap-x-1.5">
                             <View className="w-1.5 h-1.5 rounded-full bg-green-400" />
                             <Text className="text-green-500 text-xs font-semibold">Live</Text>
@@ -145,10 +201,10 @@ export default function UserProfile() {
                         </View>
                         <View className="flex-1">
                             <Text className="text-slate-400 text-xs font-semibold tracking-widest uppercase mb-0.5">
-                                Linked Since
+                                Account Created
                             </Text>
                             <Text className="text-slate-900 text-sm font-semibold">
-                                {user.linkedSince}
+                                {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}
                             </Text>
                         </View>
                     </View>
@@ -186,19 +242,6 @@ export default function UserProfile() {
                         </Text>
                     </View>
                 </View>
-
-                {/* Action Buttons */}
-                <TouchableOpacity
-                    className="bg-blue-500 rounded-2xl py-4 items-center mb-3"
-                    activeOpacity={0.8}
-                >
-                    <View className="flex-row items-center gap-x-2">
-                        <Ionicons name="pencil" size={16} color="#ffffff" />
-                        <Text className="text-white font-bold tracking-widest uppercase text-sm">
-                            Edit Profile
-                        </Text>
-                    </View>
-                </TouchableOpacity>
             </ScrollView>
 
         </View>
