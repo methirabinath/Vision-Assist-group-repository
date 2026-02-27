@@ -1,39 +1,82 @@
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { jwtDecode } from "jwt-decode";
+import { useEffect, useState } from 'react';
+import { Alert, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { startBlindUserTracking, stopBlindUserTracking } from './locationSender';
+
 
 export default function VoiceOpen() {
     const router = useRouter();
     const [isListening, setIsListening] = useState(false);
 
+    // Start location tracking when component mounts
+    useEffect(() => {
+
+        const initTracking = async () => {
+
+            const token = await AsyncStorage.getItem("authToken");
+
+            if (token) {
+
+                const decoded: any = jwtDecode(token);
+
+                const userId = decoded.id; // ✅ extract real ID
+
+                console.log("Decoded User ID:", userId);
+
+                startBlindUserTracking(userId);
+            }
+        };
+
+        initTracking();
+
+        return () => {
+            stopBlindUserTracking();
+        };
+
+    }, []);
+
+    const handleLogout = async () => {
+        try {
+            await AsyncStorage.removeItem("authToken");
+            await AsyncStorage.removeItem("userRole");
+
+            console.log("User logged out ✅");
+
+            router.replace("/welcomeScreen"); // go to welcome screen
+        } catch (error) {
+            console.error("Logout Error:", error);
+            Alert.alert("Error", "Failed to logout");
+        }
+    };
+
     return (
         <View className="flex-1 bg-slate-50">
             <StatusBar barStyle="dark-content" />
 
-            {/* Top Section: Logo */}
-            <View className="items-center pt-16 pb-10">
+            {/* Top Section */}
+            <View className="pt-16 pb-10 px-6">
 
-                {/* Back Button */}
-                <TouchableOpacity
-                    onPress={() => router.back()}
-                    className="absolute left-6 top-4 w-10 h-10 rounded-full border border-slate-200 bg-white items-center justify-center"
-                    activeOpacity={0.7}
-                >
-                    <Ionicons name="arrow-back" size={18} color="#475569" />
-                </TouchableOpacity>
+                {/* Header Row */}
+                <View className="relative items-center justify-center mb-6">
 
-                <Text className="text-slate-400 text-xs font-semibold tracking-[4px] mb-4 uppercase">
-                    Voice Assistant
-                </Text>
+                    {/* Centered Text */}
+                    <Text className="text-slate-400 text-xs font-semibold tracking-[4px] uppercase">
+                        Voice Assistant
+                    </Text>
 
-                <Text className="text-slate-900 text-5xl font-bold tracking-tight">
+                </View>
+
+                {/* Main Title */}
+                <Text className="text-slate-900 text-5xl font-bold tracking-tight text-center">
                     Vision<Text className="text-blue-500">Assist</Text>
                 </Text>
 
-                <View className="w-12 h-0.5 bg-blue-500 mt-5 mb-5" />
+                <View className="w-12 h-0.5 bg-blue-500 mt-5 mb-5 self-center" />
 
-                <Text className="text-slate-400 text-sm tracking-widest font-medium uppercase">
+                <Text className="text-slate-400 text-sm tracking-widest font-medium uppercase text-center">
                     Smart Vision. Smart Living.
                 </Text>
 
@@ -90,8 +133,17 @@ export default function VoiceOpen() {
                     ))}
                 </View>
 
-            </View>
+                <TouchableOpacity
+                    onPress={handleLogout}
+                    className="bg-red-500 rounded-xl py-3 items-center mt-4 mb-10"
+                    activeOpacity={0.8}
+                >
+                    <Text className="text-white font-semibold">
+                        Logout
+                    </Text>
+                </TouchableOpacity>
 
+            </View>
         </View>
     );
 }
