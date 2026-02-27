@@ -1,8 +1,8 @@
-// login.tsx
 import { BASE_URL } from '@/config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function LoginScreen() {
 
@@ -12,9 +12,10 @@ export default function LoginScreen() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
+    //  Handle Login
     const handleLogin = async () => {
         if (!email || !password) {
-            alert("Please fill all the fields");
+            Alert.alert("Validation", "Please fill all the fields");
             return;
         }
 
@@ -22,33 +23,47 @@ export default function LoginScreen() {
             setLoading(true);
 
             const response = await fetch(`${BASE_URL}/api/auth/login`, {
-                method: 'POST',
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json'
+                    "Content-Type": "application/json"
                 },
-                body: JSON.stringify({
-                    email,
-                    password
-                })
+                body: JSON.stringify({ email, password })
             });
 
             const data = await response.json();
 
-            if (!response.ok) {
-                alert(data.message);
-                setLoading(false);
+            if (!response.ok || !data?.token) {
+                Alert.alert("Login Failed", data?.message || "Invalid credentials");
                 return;
             }
 
-            alert("Login successful");
-            setLoading(false);
-            router.push('/');
+            await AsyncStorage.setItem(
+                "authToken",
+                data.token.trim()
+            );
+            const role = data.role;
+
+            // Store role
+            await AsyncStorage.setItem("userRole", role);
+
+            console.log("JWT Token Stored ✅");
+            console.log("User Role:", role);
+
+            // Navigate
+            if (role === "blindUser") {
+                router.replace("/openVoice");
+            } else {
+                router.replace("/home");
+            }
 
         } catch (error) {
-            console.log(error);
+            console.error("Login Error:", error);
+            Alert.alert("Error", "Something went wrong");
+        } finally {
             setLoading(false);
         }
-    }
+    };
+
     return (
 
 
@@ -109,7 +124,6 @@ export default function LoginScreen() {
                             onChangeText={setPassword}
                         />
                         <TouchableOpacity onPress={() => setShowPassword(!showPassword)} activeOpacity={0.6}>
-                            <Text className="text-slate-400 text-lg px-2">👁</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
