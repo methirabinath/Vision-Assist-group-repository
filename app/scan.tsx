@@ -1,15 +1,19 @@
+import { BASE_URL } from "@/config";
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Animated, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function ScanScreen() {
     const [permission, requestPermission] = useCameraPermissions();
     const [scanned, setScanned] = useState(false);
     const router = useRouter();
     const pulseAnim = useRef(new Animated.Value(1)).current;
+    const [isLinked, setIsLinked] = useState(false);
 
+    // Animation
     useEffect(() => {
         const animation = Animated.loop(
             Animated.sequence([
@@ -21,10 +25,76 @@ export default function ScanScreen() {
         return () => animation.stop();
     }, []);
 
-    const handleBarCodeScanned = ({ data }: { data: string }) => {
-        if (scanned) return;
+    // Check connection status on mount
+    useEffect(() => {
+        checkConnectionStatus();
+    }, []);
+
+    // Check connection status
+    const checkConnectionStatus = async () => {
+        try {
+            const token = await AsyncStorage.getItem("authToken");
+            if (!token) return;
+
+            const response = await fetch(`${BASE_URL}/api/users/me`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const data = await response.json();
+
+            if (data.user?.familyGroupId) {
+                setIsLinked(true);
+                setScanned(true); // disable scanner
+            }
+        } catch (error) {
+            console.log("Status check error:", error);
+        }
+    };
+
+    // Handle QR code scanned
+    const handleBarCodeScanned = async ({ data }: { data: string }) => {
+        if (scanned || isLinked) return;
+
         setScanned(true);
-        setTimeout(() => { }, 500);
+
+        try {
+            const token = await AsyncStorage.getItem("authToken");
+
+            if (!token) {
+                Alert.alert("Error", "Not authenticated");
+                setScanned(false);
+                return;
+            }
+
+            const response = await fetch(`${BASE_URL}/api/users/connect`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    familyGroupId: data,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                Alert.alert("Error", result.message);
+                setScanned(false);
+                return;
+            }
+
+            setIsLinked(true);
+            Alert.alert("Success", "Device Linked Successfully!");
+
+        } catch (error) {
+            console.log("Connection error:", error);
+            Alert.alert("Error", "Connection failed");
+            setScanned(false);
+        }
     };
 
     // Permission Loading 
@@ -138,47 +208,49 @@ export default function ScanScreen() {
 
                 {/* Camera Viewfinder */}
                 <View className="rounded-2xl overflow-hidden aspect-square w-full bg-slate-900 relative">
+
                     <CameraView
                         style={StyleSheet.absoluteFillObject}
                         facing="back"
-                        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
-                        barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+                        onBarcodeScanned={
+                            scanned || isLinked ? undefined : handleBarCodeScanned
+                        }
+                        barcodeScannerSettings={{
+                            barcodeTypes: ['qr']
+                        }}
                     />
 
-                    {/* Corner Markers */}
-                    <View className="absolute inset-0 items-center justify-center">
-                        <View className="w-52 h-52 relative">
-                            <View className="absolute top-0 left-0 w-10 h-10 border-t-2 border-l-2 border-white rounded-tl-xl" />
-                            <View className="absolute top-0 right-0 w-10 h-10 border-t-2 border-r-2 border-white rounded-tr-xl" />
-                            <View className="absolute bottom-0 left-0 w-10 h-10 border-b-2 border-l-2 border-white rounded-bl-xl" />
-                            <View className="absolute bottom-0 right-0 w-10 h-10 border-b-2 border-r-2 border-white rounded-br-xl" />
-                        </View>
-                    </View>
-
-                    {/* Scanned Success Overlay */}
-                    {scanned && (
+                    {/* Green Success Overlay */}
+                    {(scanned || isLinked) && (
                         <View className="absolute inset-0 bg-green-500/90 items-center justify-center">
+
                             <View className="w-16 h-16 bg-white rounded-full items-center justify-center mb-3">
                                 <Ionicons name="checkmark" size={32} color="#22c55e" />
                             </View>
-                            <Text className="text-white text-lg font-bold tracking-wide">
+
+                            <Text className="text-white text-lg font-bold">
                                 Device Linked!
                             </Text>
+
                         </View>
                     )}
+
                 </View>
 
                 {/* Pulse Indicator */}
                 <View className="items-center mt-8">
+
                     <Animated.View
                         style={{ transform: [{ scale: pulseAnim }] }}
                         className="w-12 h-12 bg-blue-50 rounded-full items-center justify-center"
                     >
                         <View className="w-3 h-3 bg-blue-500 rounded-full" />
                     </Animated.View>
-                    <Text className="text-slate-400 text-xs font-semibold tracking-widest uppercase mt-3">
-                        {scanned ? 'Linked' : 'Scanning...'}
+
+                    <Text className="text-slate-400 text-xs uppercase mt-3 font-semibold">
+                        {isLinked ? "DEVICE ALREADY LINKED" : "SCANNING..."}
                     </Text>
+
                 </View>
 
             </View>
