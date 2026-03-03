@@ -73,7 +73,30 @@ def audio_callback(indata, frames, time, status):
     
     return None"""
 
+import re
 
+def extract_destination(text):
+    # Added \b for word boundaries and made the phrases more flexible
+    patterns = [
+        r"take me to\s+(.+)",
+        r"go to\s+(.+)",
+        r"navigate to\s+(.+)",
+        r"guide me to\s+(.+)",
+        r"bring me to\s+(.+)"
+    ]
+    
+    for pattern in patterns:
+        # re.IGNORECASE handles 'Take' vs 'take' automatically
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            # Clean up punctuation like periods or question marks
+            destination = match.group(1).strip().rstrip('.?!')
+            return destination
+    
+    return None
+
+# Test it
+print(extract_destination("Navigate to 123 Main St.")) # Output: 123 Main St
 
 
 # -----------------------------
