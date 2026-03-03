@@ -10,6 +10,7 @@ import { startBlindUserTracking, stopBlindUserTracking } from './locationSender'
 export default function VoiceOpen() {
     const router = useRouter();
     const [isListening, setIsListening] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
 
     // Start location tracking when component mounts
     useEffect(() => {
@@ -22,7 +23,7 @@ export default function VoiceOpen() {
 
                 const decoded: any = jwtDecode(token);
 
-                const userId = decoded.id; // ✅ extract real ID
+                const userId = decoded.id; //  extract real ID
 
                 console.log("Decoded User ID:", userId);
 
@@ -56,31 +57,72 @@ export default function VoiceOpen() {
         <View className="flex-1 bg-slate-50">
             <StatusBar barStyle="dark-content" />
 
-            {/* Top Section */}
-            <View className="pt-16 pb-10 px-6">
+            <View className="bg-white pt-14 pb-5 px-6 border-b border-slate-100">
+                <View className="flex-row justify-between items-center">
 
-                {/* Header Row */}
-                <View className="relative items-center justify-center mb-6">
+                    {/* Hamburger */}
+                    <TouchableOpacity
+                        onPress={() => setMenuOpen(!menuOpen)}
+                        className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center"
+                    >
+                        <Ionicons
+                            name={menuOpen ? "close" : "menu"}
+                            size={22}
+                            color="#475569"
+                        />
+                    </TouchableOpacity>
 
-                    {/* Centered Text */}
-                    <Text className="text-slate-400 text-xs font-semibold tracking-[4px] uppercase">
-                        Voice Assistant
+                    <Text className="text-xl font-bold">
+                        Vision<Text className="text-blue-500">Assist</Text>
                     </Text>
 
+                    <View className="w-10" />
                 </View>
-
-                {/* Main Title */}
-                <Text className="text-slate-900 text-5xl font-bold tracking-tight text-center">
-                    Vision<Text className="text-blue-500">Assist</Text>
-                </Text>
-
-                <View className="w-12 h-0.5 bg-blue-500 mt-5 mb-5 self-center" />
-
-                <Text className="text-slate-400 text-sm tracking-widest font-medium uppercase text-center">
-                    Smart Vision. Smart Living.
-                </Text>
-
             </View>
+
+            {/* Dropdown Menu */}
+            {menuOpen && (
+                <View className="absolute top-28 left-6 right-6 bg-white border border-slate-200 rounded-2xl shadow-lg z-50">
+
+                    {/* View QR */}
+                    <TouchableOpacity
+                        onPress={() => {
+                            setMenuOpen(false);
+                            router.push("/qrPage");
+                        }}
+                        className="py-4 px-5 flex-row items-center"
+                    >
+                        <Ionicons
+                            name="qr-code-outline"
+                            size={18}
+                            color="#2563eb"
+                            style={{ marginRight: 10 }}
+                        />
+                        <Text className="font-semibold text-slate-800">
+                            View QR Code
+                        </Text>
+                    </TouchableOpacity>
+
+                    <View className="h-px bg-slate-100 mx-5" />
+
+                    {/* Logout */}
+                    <TouchableOpacity
+                        onPress={handleLogout}
+                        className="py-4 px-5 flex-row items-center"
+                    >
+                        <Ionicons
+                            name="log-out-outline"
+                            size={18}
+                            color="#dc2626"
+                            style={{ marginRight: 10 }}
+                        />
+                        <Text className="font-semibold text-red-600">
+                            Logout
+                        </Text>
+                    </TouchableOpacity>
+
+                </View>
+            )}
 
             {/* Content Card */}
             <View className="flex-1 bg-white rounded-t-3xl px-8 pt-10">
@@ -132,17 +174,6 @@ export default function VoiceOpen() {
                         </TouchableOpacity>
                     ))}
                 </View>
-
-                <TouchableOpacity
-                    onPress={handleLogout}
-                    className="bg-red-500 rounded-xl py-3 items-center mt-4 mb-10"
-                    activeOpacity={0.8}
-                >
-                    <Text className="text-white font-semibold">
-                        Logout
-                    </Text>
-                </TouchableOpacity>
-
             </View>
         </View>
     );

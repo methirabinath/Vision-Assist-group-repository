@@ -30,12 +30,6 @@ export default function UserProfile() {
             console.log("🔍 Token found:", token ? "YES" : "NO");
             console.log("Sending Token:", token);
 
-            if (!token) {
-                console.log("No token found - redirect to login");
-                router.replace("/login"); // Auto-redirect
-                return;
-            }
-
             const response = await fetch(`${BASE_URL}/api/users/me`, {
                 method: "GET",
                 headers: {

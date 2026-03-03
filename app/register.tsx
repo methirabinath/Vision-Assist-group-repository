@@ -215,6 +215,8 @@ export default function RegisterScreen() {
                 {/* Create Account Button */}
                 <TouchableOpacity
                     className="bg-blue-500 rounded-2xl py-3 items-center mb-4"
+                    onPress={handleRegister}
+                    disabled={loading}
                 >
                     <Text className="text-white text-base font-bold tracking-widest uppercase">
                         Create Account
