@@ -14,7 +14,7 @@ import os
 
 MODEL_PATH = "vosk-model-small-en-us-0.15/vosk-model-small-en-us-0.15"
 SAMPLE_RATE = 16000
-WAKE_WORD = "hello vision"
+WAKE_WORD = "hello"
 
 is_awake = False
 
@@ -123,6 +123,7 @@ def send_to_navigation(destination):
 # -----------------------------
 
 def listen_for_command():
+    global is_awake
     speak("Voice navigation system ready.")
 
     with sd.RawInputStream(
@@ -144,9 +145,6 @@ def listen_for_command():
                     print("User said:", text)
 
 
-                    global is_awake
-
-                    #checking the wake word
                     if not is_awake:
                         if WAKE_WORD in text.lower():
                             is_awake = True
@@ -157,16 +155,13 @@ def listen_for_command():
                     
                     if destination:
                         speak(f"Starting navigation to {destination}")
-                        
-                        nav_response = send_to_navigation(destination)
-                        
-                        if nav_response:
-                            speak("Navigation request sent successfully.")
-                        else:
-                            speak("Unable to connect to navigation system.")
+                        send_to_navigation(destination)
+                        is_awake = False # Go back to sleep
                     
                     else:
                         speak("Please say your destination clearly.")
+                        is_awake = False
+                        #Asking for the destination again
 
 
 # -----------------------------
