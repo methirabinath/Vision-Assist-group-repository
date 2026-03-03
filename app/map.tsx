@@ -1,28 +1,70 @@
-import { StyleSheet, View } from 'react-native';
-import MapView, { PROVIDER_DEFAULT } from 'react-native-maps';
+import { onValue, ref } from "firebase/database";
+import { useEffect, useState } from "react";
+import { Dimensions, StyleSheet, View } from "react-native";
+import MapView, { Marker } from "react-native-maps";
+import { db } from "../firebase";
 
 export default function GpsMapScreen() {
+
+    const [locations, setLocations] = useState<any[]>([]);
+
+    useEffect(() => {
+
+        const trackingRef = ref(db, "tracking");
+
+        const unsubscribe = onValue(trackingRef, (snapshot) => {
+
+            const data = snapshot.val();
+
+            if (!data) return;
+
+            const userLocations = Object.entries(data).map(([userId, loc]: any) => ({
+                id: userId,
+                latitude: loc.latitude,
+                longitude: loc.longitude
+            }));
+
+            setLocations(userLocations);
+
+        });
+
+        return () => unsubscribe();
+
+    }, []);
+
     return (
         <View style={styles.container}>
             <MapView
-                provider={PROVIDER_DEFAULT}
                 style={styles.map}
-                initialRegion={{
-                    latitude: 7.8731,   // Sri Lanka
-                    longitude: 80.7718,
-                    latitudeDelta: 2.5,
-                    longitudeDelta: 2.5,
-                }}
                 zoomEnabled
                 scrollEnabled
-                pitchEnabled
-                rotateEnabled
-            />
+                initialRegion={{
+                    latitude: 7.8731,
+                    longitude: 80.7718,
+                    latitudeDelta: 0.05,
+                    longitudeDelta: 0.05,
+                }}
+            >
+                {locations.map((loc) => (
+                    <Marker
+                        key={loc.id}
+                        coordinate={{
+                            latitude: loc.latitude,
+                            longitude: loc.longitude
+                        }}
+                    />
+                ))}
+            </MapView>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1 },
-    map: { width: '100%', height: '100%' },
+    container: {
+        flex: 1
+    },
+    map: {
+        width: Dimensions.get("window").width,
+        height: Dimensions.get("window").height
+    }
 });
