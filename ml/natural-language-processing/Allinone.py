@@ -14,6 +14,9 @@ import os
 
 MODEL_PATH = "vosk-model-small-en-us-0.15/vosk-model-small-en-us-0.15"
 SAMPLE_RATE = 16000
+WAKE_WORD = "hello vision"
+
+is_awake = False
 
 # Replace with your teammate's navigation API endpoint
 NAVIGATION_API_URL = "http://localhost:5000/navigate"
@@ -139,7 +142,17 @@ def listen_for_command():
                 
                 if text:
                     print("User said:", text)
-                    
+
+
+                    global is_awake
+
+                    #checking the wake word
+                    if not is_awake:
+                        if WAKE_WORD in text.lower():
+                            is_awake = True
+                            speak("Yes, how can I assist you?")
+                        continue  # Skip processing until wake word is detected
+
                     destination = extract_destination(text)
                     
                     if destination:
