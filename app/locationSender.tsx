@@ -5,59 +5,72 @@ import { db } from "../firebase";
 let trackingInterval: ReturnType<typeof setInterval> | null = null;
 
 // Start Blind User Location Tracking
-
 export async function startBlindUserTracking(userId: string) {
 
-    if (!userId) {
-        console.log("Tracking failed: userId missing");
-        return;
-    }
+    try {
 
-    // Ask permission
-    const { status } = await Location.requestForegroundPermissionsAsync();
-
-    if (status !== "granted") {
-        alert("Location permission required");
-        return;
-    }
-
-    // Clear previous interval if exists
-    if (trackingInterval) {
-        clearInterval(trackingInterval);
-    }
-
-    console.log("Tracking started ✅");
-
-    trackingInterval = setInterval(async () => {
-
-        try {
-
-            const location = await Location.getCurrentPositionAsync({
-                accuracy: Location.Accuracy.High
-            });
-
-            await set(ref(db, `tracking/${userId}`), {
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-                timestamp: Date.now()
-            });
-
-            console.log("Firebase location updated ✅");
-
-        } catch (error) {
-            console.log("Tracking error:", error);
+        if (!userId) {
+            console.log("Tracking failed: userId missing");
+            return;
         }
 
-    }, 5000);
+        // Request permission safely
+        const { status } = await Location.requestForegroundPermissionsAsync();
+
+        if (status !== "granted") {
+            console.log("Location permission denied");
+            return;
+        }
+
+        // Clear previous tracking interval
+        if (trackingInterval) {
+            clearInterval(trackingInterval);
+            trackingInterval = null;
+        }
+
+        console.log("Tracking started ✅");
+
+        trackingInterval = setInterval(async () => {
+
+            try {
+
+                const location = await Location.getCurrentPositionAsync({
+                    accuracy: Location.Accuracy.High
+                });
+
+                if (!location?.coords) return;
+
+                await set(ref(db, `tracking/${userId}`), {
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                    timestamp: Date.now()
+                });
+
+                console.log("Firebase location updated ✅");
+
+            } catch (error) {
+                console.log("Tracking error:", error);
+            }
+
+        }, 5000);
+
+    } catch (error) {
+        console.log("Tracking init error:", error);
+    }
 }
 
-// Stop Blind User Location Tracking
-
+// Stop Tracking
 export function stopBlindUserTracking() {
 
-    if (trackingInterval) {
-        clearInterval(trackingInterval);
-        trackingInterval = null;
-        console.log("Tracking stopped ✅");
+    try {
+
+        if (trackingInterval) {
+            clearInterval(trackingInterval);
+            trackingInterval = null;
+            console.log("Tracking stopped ✅");
+        }
+
+    } catch (error) {
+        console.log("Tracking stop error:", error);
     }
 }

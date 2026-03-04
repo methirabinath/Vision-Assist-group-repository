@@ -8,6 +8,7 @@ import { startBlindUserTracking, stopBlindUserTracking } from './locationSender'
 
 
 export default function VoiceOpen() {
+
     const router = useRouter();
     const [isListening, setIsListening] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -17,17 +18,36 @@ export default function VoiceOpen() {
 
         const initTracking = async () => {
 
-            const token = await AsyncStorage.getItem("authToken");
+            try {
 
-            if (token) {
+                const token = await AsyncStorage.getItem("authToken");
+                if (!token) {
+                    console.log("No token found");
+                    return;
+                }
 
-                const decoded: any = jwtDecode(token);
+                let decoded: any;
 
-                const userId = decoded.id; //  extract real ID
+                try {
+                    decoded = jwtDecode(token);
+                } catch (error) {
+                    console.log("JWT decode error");
+                    return;
+                }
+
+                const userId = decoded?.id;
+
+                if (!userId) {
+                    console.log("User ID missing");
+                    return;
+                }
 
                 console.log("Decoded User ID:", userId);
 
-                startBlindUserTracking(userId);
+                await startBlindUserTracking(userId);
+
+            } catch (error) {
+                console.log("Tracking init error:", error);
             }
         };
 
@@ -46,7 +66,7 @@ export default function VoiceOpen() {
 
             console.log("User logged out ✅");
 
-            router.replace("/welcomeScreen"); // go to welcome screen
+            router.replace("/welcomeScreen");
         } catch (error) {
             console.error("Logout Error:", error);
             Alert.alert("Error", "Failed to logout");
