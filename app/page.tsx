@@ -1,6 +1,65 @@
+"use client"
 import { GiFedora } from "react-icons/gi";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { BASE_URL } from "@/config";
 
 export default function VisionAssistAdminLogin() {
+
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!email || !password) {
+      alert("Please enter email and password");
+      return;
+    }
+
+    try {
+
+      setLoading(true);
+
+      const response = await fetch(`${BASE_URL}/api/admin/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Login failed");
+        return;
+      }
+
+      // Store JWT token (important)
+      if (data.token) {
+        localStorage.setItem("admin_token", data.token);
+      }
+
+      alert("Login successful");
+      console.log("Token being sent:", data.token);
+
+      router.push("/admin");
+
+    } catch (error) {
+      console.log(error);
+      alert("Login error");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Branding */}
@@ -62,7 +121,7 @@ export default function VisionAssistAdminLogin() {
           </div>
 
           {/* Login Form */}
-          <form className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-6">
             {/* Email Field */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -86,6 +145,8 @@ export default function VisionAssistAdminLogin() {
                 </div>
                 <input
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-lg 
                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent 
                  transition placeholder-gray-400"
@@ -120,6 +181,8 @@ export default function VisionAssistAdminLogin() {
                 </div>
                 <input
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-lg 
                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent 
                  transition placeholder-gray-400"
@@ -143,6 +206,8 @@ export default function VisionAssistAdminLogin() {
             {/* Login Button */}
             <button
               type="submit"
+              disabled={loading}
+              onClick={handleLogin}
               className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
             >
               Sign In to Dashboard
@@ -162,6 +227,19 @@ export default function VisionAssistAdminLogin() {
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* Small Sign Up Link */}
+            <div className="text-center mt-5">
+              <p className="text-sm text-gray-500">
+                Don&apos;t have an admin account?{" "}
+                <a
+                  href="/register"
+                  className="text-blue-600 font-semibold hover:text-blue-700 transition"
+                >
+                  Sign Up
+                </a>
+              </p>
             </div>
           </form>
 
