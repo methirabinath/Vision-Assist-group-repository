@@ -72,3 +72,26 @@ def count_convNd_ver2(m: _ConvNd, x, y: torch.Tensor):
         m.weight.nelement(),
         output_size
     )
+
+
+    def count_normalization(m: nn.modules.batchnorm._BatchNorm, x, y):
+    x = x[0]
+    flops = calculate_norm(x.numel())
+
+    if getattr(m, "affine", False) or getattr(m, "elementwise_affine", False):
+        flops *= 2
+
+    m.total_ops += flops
+
+
+def count_prelu(m, x, y):
+    x = x[0]
+
+    nelements = x.numel()
+    if not m.training:
+        m.total_ops += calculate_relu(nelements)
+
+
+def count_relu(m, x, y):
+    x = x[0]
+    m.total_ops += calculate_relu_flops(list(x.shape))
