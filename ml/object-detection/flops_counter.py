@@ -180,4 +180,27 @@ def count_linear(m, x, y):
 
 
 
+def count_upsample(m, x, y):
+    if m.mode not in (
+        "nearest",
+        "linear",
+        "bilinear",
+        "bicubic",
+        "trilinear",
+    ):
+        logging.warning(f"mode {m.mode} is not implemented yet, take it a zero op")
+        m.total_ops += 0
+    else:
+        x = x[0]
+        m.total_ops += calculate_upsample(m.mode, y.nelement())
+
+
+def count_linear(m, x, y):
+    total_mul = m.in_features
+    num_elements = y.numel()
+
+    m.total_ops += calculate_linear(total_mul, num_elements)
+
+
+
 
