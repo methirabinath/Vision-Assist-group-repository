@@ -95,3 +95,58 @@ def count_prelu(m, x, y):
 def count_relu(m, x, y):
     x = x[0]
     m.total_ops += calculate_relu_flops(list(x.shape))
+
+
+
+
+    def count_softmax(m, x, y):
+    x = x[0]
+    nfeatures = x.size()[m.dim]
+    batch_size = x.numel() // nfeatures
+
+    m.total_ops += calculate_softmax(batch_size, nfeatures)
+
+
+def count_avgpool(m, x, y):
+    num_elements = y.numel()
+    m.total_ops += calculate_avgpool(num_elements)
+
+
+def count_adap_avgpool(m, x, y):
+    kernel = torch.div(
+        torch.DoubleTensor([*(x[0].shape[2:])]),
+        torch.DoubleTensor([*(y.shape[2:])])
+    )
+
+    total_add = torch.prod(kernel)
+    num_elements = y.numel()
+
+    m.total_ops += calculate_adaptive_avg(total_add, num_elements)
+
+
+
+
+
+ def count_softmax(m, x, y):
+    x = x[0]
+    nfeatures = x.size()[m.dim]
+    batch_size = x.numel() // nfeatures
+
+    m.total_ops += calculate_softmax(batch_size, nfeatures)
+
+
+def count_avgpool(m, x, y):
+    num_elements = y.numel()
+    m.total_ops += calculate_avgpool(num_elements)
+
+
+def count_adap_avgpool(m, x, y):
+    kernel = torch.div(
+        torch.DoubleTensor([*(x[0].shape[2:])]),
+        torch.DoubleTensor([*(y.shape[2:])])
+    )
+
+    total_add = torch.prod(kernel)
+    num_elements = y.numel()
+
+    m.total_ops += calculate_adaptive_avg(total_add, num_elements)   
