@@ -20,3 +20,12 @@ from thop.vision.calc_func import (
 )
 
 multiply_adds = 1
+
+def count_parameters(m, x, y):
+    """Calculate and return the total number of learnable parameters in a given PyTorch model."""
+    m.total_params[0] = calculate_parameters(m.parameters())
+
+
+def zero_ops(m, x, y):
+    """Incrementally add zero operations to the model's total operations count."""
+    m.total_ops += calculate_zero_ops()
