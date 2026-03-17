@@ -1,8 +1,11 @@
 import * as Location from "expo-location";
 import { ref, set } from "firebase/database";
 import { db } from "../firebase";
+import { getHatStatus } from "../services/hatApi";
 
 let trackingInterval: ReturnType<typeof setInterval> | null = null;
+let fallInterval: ReturnType<typeof setInterval> | null = null;
+let fallSent = false;
 
 // Start Blind User Location Tracking
 export async function startBlindUserTracking(userId: string) {
@@ -72,5 +75,53 @@ export function stopBlindUserTracking() {
 
     } catch (error) {
         console.log("Tracking stop error:", error);
+    }
+}
+
+// Send fall alert to Firebase
+export async function sendFallAlert(userId: string) {
+    try {
+        const data = await getHatStatus();
+        if (!data) {
+            console.log("Cannot reach the hat");
+            return;
+        }
+
+        if (data.fall) {
+            // Get latest location
+            const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+
+            await set(ref(db, `fallAlerts/${userId}`), {
+                fall: true,
+                timestamp: Date.now(),
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude
+            });
+
+            console.log("Fall alert sent ✅");
+        }
+
+        console.log(data);
+
+    } catch (error) {
+        console.log("Fall alert error:", error);
+    }
+}
+
+// Start automatic fall monitoring
+export function startFallMonitoring(userId: string) {
+    if (fallInterval) clearInterval(fallInterval);
+
+    fallInterval = setInterval(() => {
+        sendFallAlert(userId);
+    }, 3000); // check every 3 seconds
+}
+
+// Stop automatic fall monitoring
+export function stopFallMonitoring() {
+    if (fallInterval) {
+        clearInterval(fallInterval);
+        fallInterval = null;
+        console.log("Fall monitoring stopped ✅");
     }
 }
