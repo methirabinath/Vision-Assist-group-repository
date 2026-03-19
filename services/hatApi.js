@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const HAT_IP = "192.168.96.244";
+const HAT_IP = "10.42.0.1";
 
 const api = axios.create({
     baseURL: `http://${HAT_IP}:5000`,
