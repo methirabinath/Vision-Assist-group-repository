@@ -11,19 +11,20 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const alertRoutes = require("./routes/alertRoutes");
 
+const errorHandler = require("./middleware/errorHandler");
+
 const app = express();
 
 // Create HTTP server
 const server = http.createServer(app);
 
-// Attach socket.io
+// Socket setup
 const io = new Server(server, {
   cors: {
     origin: "*"
   }
 });
 
-// Make io accessible in controllers
 app.set("io", io);
 
 // DB connect
@@ -37,7 +38,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/alert", alertRoutes);
 
-// Test route
+// Root route
 app.get("/", (req, res) => {
   res.send("VisionAssist Backend Running");
 });
@@ -50,6 +51,9 @@ io.on("connection", (socket) => {
     console.log("Client disconnected:", socket.id);
   });
 });
+
+//Global error handler (must be last)
+app.use(errorHandler);
 
 const PORT = 5000;
 
