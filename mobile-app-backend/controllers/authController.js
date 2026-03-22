@@ -1,13 +1,13 @@
 const User = require("../models/User");
+const bcrypt = require("bcryptjs");
 
 /*
   Handles user registration logic.
-  Receives data from request body and saves user in database.
+  Password is hashed before saving to database.
 */
 
 exports.register = async (req, res) => {
   try {
-
     const { fullName, phone, email, password } = req.body;
 
     // Basic validation
@@ -26,12 +26,15 @@ exports.register = async (req, res) => {
       });
     }
 
+    // Hash password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // Create new user
     const newUser = await User.create({
       fullName,
       phone,
       email,
-      password
+      password: hashedPassword
     });
 
     res.json({
@@ -40,12 +43,7 @@ exports.register = async (req, res) => {
     });
 
   } catch (err) {
-
     console.error(err);
-
-    res.status(500).json({
-      message: "Server error"
-    });
-
+    res.status(500).json({ message: "Server error" });
   }
 };
