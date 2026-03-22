@@ -1,3 +1,4 @@
+import { getHatStatus } from '@/services/hatApi';
 import { Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
@@ -14,6 +15,7 @@ export default function HomeScreen() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [battery, setBattery] = useState<number | null>(null);
 
 
     // Check login status on mount
@@ -28,6 +30,22 @@ export default function HomeScreen() {
         };
 
         checkLoginStatus();
+    }, []);
+
+    useEffect(() => {
+        const fetchBattery = async () => {
+            try {
+                const data = await getHatStatus();
+                if (data?.battery !== undefined) setBattery(data.battery);
+            } catch (err) {
+                console.log('Error fetching battery:', err);
+            }
+        };
+
+        fetchBattery(); // immediate fetch
+        const interval = setInterval(fetchBattery, 5000); // TS infers type as number
+
+        return () => clearInterval(interval); // cleanup
     }, []);
 
     // Logout function
@@ -171,7 +189,9 @@ export default function HomeScreen() {
                                 </View>
                                 <View>
                                     <Text className="text-slate-400 text-xs">Battery</Text>
-                                    <Text className="text-emerald-600 text-sm font-bold">85%</Text>
+                                    <Text className="text-emerald-600 text-sm font-bold">
+                                        {battery !== null ? `${battery}%` : '...'}
+                                    </Text>
                                 </View>
                             </View>
 

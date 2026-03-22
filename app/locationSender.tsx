@@ -93,6 +93,7 @@ export async function sendFallAlert(userId: string) {
 
             await set(ref(db, `fallAlerts/${userId}`), {
                 fall: true,
+                battery: data.battery,
                 timestamp: Date.now(),
                 latitude: location.coords.latitude,
                 longitude: location.coords.longitude
