@@ -1,16 +1,33 @@
 // splash.tsx
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { StatusBar, Text, View } from 'react-native';
 
 export default function SplashScreen() {
 
     const router = useRouter();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setTimeout(() => {
-            router.replace("/welcomeScreen");
-        }, 2000);
+        const init = async () => {
+            // Wait 2 seconds for splash screen
+            await new Promise(resolve => setTimeout(resolve, 5000));
+
+            // Check auth
+            const token = await AsyncStorage.getItem("authToken");
+            const role = await AsyncStorage.getItem("userRole");
+
+            if (token && role) {
+                // Navigate based on role
+                if (role === "blindUser") router.replace("/openVoice");
+                else router.replace("/home");
+            } else {
+                router.replace("/login");
+            }
+        };
+
+        init();
     }, []);
 
     return (
