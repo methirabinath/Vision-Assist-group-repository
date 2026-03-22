@@ -1,36 +1,45 @@
+import { db } from "@/firebase";
 import { useRouter } from 'expo-router';
-import { onValue, ref } from "firebase/database";
+import { DataSnapshot, off, onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import { ScrollView, StatusBar, Text, View } from 'react-native';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { db } from "../firebase";
+
+type Alert = {
+    id: string;
+    latitude?: number;
+    longitude?: number;
+    timestamp?: number;
+    fall?: boolean;
+};
 
 export default function AlertsScreen() {
     const insets = useSafeAreaInsets();
     const router = useRouter();
-    const [alerts, setAlerts] = useState<any[]>([]);
+    const [alerts, setAlerts] = useState<Alert[]>([]);
 
 
     // Listen for real-time updates from Firebase
     useEffect(() => {
         const alertsRef = ref(db, "fallAlerts");
 
-        const unsubscribe = onValue(alertsRef, (snapshot) => {
+        const callback = (snapshot: DataSnapshot) => {
             const data = snapshot.val();
 
             if (data) {
-                // Convert object to array & reverse to show latest first
                 const alertList = Object.keys(data)
                     .map(key => ({ id: key, ...data[key] }))
-                    .filter(alert => alert.fall === true); // only fall alerts
+                    .filter(alert => alert.fall === true);
 
                 setAlerts(alertList.reverse());
             } else {
                 setAlerts([]);
             }
-        });
+        };
 
-        return () => unsubscribe();
+        onValue(alertsRef, callback);
+
+        return () => off(alertsRef, "value", callback);
     }, []);
 
     return (
@@ -133,7 +142,9 @@ export default function AlertsScreen() {
                             </Text>
 
                             <Text className="text-slate-400 text-xs mt-1">
-                                {new Date(alert.timestamp).toLocaleString()}
+                                {alert.timestamp
+                                    ? new Date(alert.timestamp).toLocaleString()
+                                    : "No time"}
                             </Text>
                         </View>
                     ))
