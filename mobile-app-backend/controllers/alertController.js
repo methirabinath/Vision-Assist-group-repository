@@ -1,6 +1,6 @@
 const Alert = require("../models/Alert");
 
-//FALL alert from device
+//FALL alert
 exports.fallAlert = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -13,8 +13,17 @@ exports.fallAlert = async (req, res) => {
       longitude
     });
 
+    // Send real time alert
+    const io = req.app.get("io");
+    io.emit("fallAlert", {
+      userId,
+      latitude,
+      longitude,
+      time: new Date()
+    });
+
     res.json({
-      message: "Fall alert saved",
+      message: "Fall alert saved & broadcasted",
       alertId: alert._id
     });
 
@@ -38,8 +47,18 @@ exports.sosAlert = async (req, res) => {
       longitude
     });
 
+    // Send real time alert
+    const io = req.app.get("io");
+    io.emit("sosAlert", {
+      userId,
+      message,
+      latitude,
+      longitude,
+      time: new Date()
+    });
+
     res.json({
-      message: "SOS alert saved",
+      message: "SOS alert saved & broadcasted",
       alertId: alert._id
     });
 
@@ -49,7 +68,7 @@ exports.sosAlert = async (req, res) => {
   }
 };
 
-//Get alerts of a user
+//Get alerts
 exports.getUserAlerts = async (req, res) => {
   try {
     const userId = req.params.userId;

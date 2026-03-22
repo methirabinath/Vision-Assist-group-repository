@@ -2,6 +2,9 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const http = require("http");
+const { Server } = require("socket.io");
+
 const connectDB = require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
@@ -10,7 +13,20 @@ const alertRoutes = require("./routes/alertRoutes");
 
 const app = express();
 
-// Connect DB
+// Create HTTP server
+const server = http.createServer(app);
+
+// Attach socket.io
+const io = new Server(server, {
+  cors: {
+    origin: "*"
+  }
+});
+
+// Make io accessible in controllers
+app.set("io", io);
+
+// DB connect
 connectDB();
 
 app.use(cors());
@@ -26,8 +42,17 @@ app.get("/", (req, res) => {
   res.send("VisionAssist Backend Running");
 });
 
+// Socket connection
+io.on("connection", (socket) => {
+  console.log("Client connected:", socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+  });
+});
+
 const PORT = 5000;
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
