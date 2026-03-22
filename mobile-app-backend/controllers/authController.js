@@ -3,9 +3,7 @@ const bcrypt = require("bcryptjs");
 
 /*
   Handles user registration logic.
-  Password is hashed before saving to database.
 */
-
 exports.register = async (req, res) => {
   try {
     const { fullName, phone, email, password } = req.body;
@@ -48,19 +46,21 @@ exports.register = async (req, res) => {
   }
 };
 
-
+/*
+  Handles user login logic.
+*/
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find user by email
+    // Find user
     const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Compare password with hashed password
+    // Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
