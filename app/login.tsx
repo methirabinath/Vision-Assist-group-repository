@@ -54,9 +54,9 @@ export default function LoginScreen() {
 
             // Navigate
             if (role === "blindUser") {
-                router.push("/openVoice");
+                router.replace("/openVoice");
             } else {
-                router.push("/home");
+                router.replace("/home");
             }
 
         } catch (error) {
