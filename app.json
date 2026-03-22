@@ -25,7 +25,7 @@
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.ACCESS_COARSE_LOCATION"
       ],
-      "package": "com.vinuda03.mobileappfrontend"
+      "package": "com.vinuda_iit.mobileappfrontend"
     },
     "web": {
       "output": "static",
@@ -54,9 +54,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "6c08fba5-b8de-4a9a-95d1-022e052363b2"
+        "projectId": "ed60d244-384c-404e-9573-1cf85bf880d3"
       }
     },
-    "owner": "vinuda03"
+    "owner": "vinuda_iit"
   }
 }
