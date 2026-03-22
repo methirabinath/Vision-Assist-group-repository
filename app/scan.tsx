@@ -22,12 +22,13 @@ export default function ScanQRPage() {
         setLoading(true);
 
         try {
-            const token = await AsyncStorage.getItem("authToken");
+            console.log("Scanned QR:", data);
 
+            const token = await AsyncStorage.getItem("authToken");
             if (!token) throw new Error("User not authenticated");
 
             const response = await fetch(`${BASE_URL}/api/users/connect`, {
-                method: "PATCH",
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
@@ -37,7 +38,10 @@ export default function ScanQRPage() {
                 }),
             });
 
-            const result = await response.json();
+            const text = await response.text();
+            console.log("RAW RESPONSE:", text);
+
+            const result = text ? JSON.parse(text) : {};
 
             if (!response.ok) {
                 throw new Error(result.message || "Connection failed");
