@@ -2,9 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-/*
-  Handles user registration logic.
-*/
+//Handles user registration
 exports.register = async (req, res) => {
   try {
     const { fullName, phone, email, password } = req.body;
@@ -44,7 +42,7 @@ exports.register = async (req, res) => {
 };
 
 /*
-  Handles user login logic with JWT token generation.
+  Handles login with JWT + block check
 */
 exports.login = async (req, res) => {
   try {
@@ -56,13 +54,17 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
+    // 🔥 NEW: Check if user is blocked
+    if (user.isBlocked) {
+      return res.status(403).json({ message: "Your account is blocked" });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    //  Generate JWT token
     const token = jwt.sign(
       {
         id: user._id,
