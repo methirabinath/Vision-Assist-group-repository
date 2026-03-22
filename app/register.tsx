@@ -14,15 +14,16 @@ export default function RegisterScreen() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [role, setRole] = useState<"blindUser" | "caregiver" | null>(null);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleRegister = async () => {
         if (!fullName || !email || !phone || !password || !confirmPassword || !role) {
-            alert("Please fill all the fields");
+            setErrorMessage("Please fill all the fields");
             return;
         }
 
         if (password !== confirmPassword) {
-            alert("Passwords do not match");
+            setErrorMessage("Passwords do not match");
             return;
         }
 
@@ -56,7 +57,7 @@ export default function RegisterScreen() {
 
         } catch (error) {
             console.log("Fetch error:", error);
-            alert("Registration failed. Please try again.");
+            setErrorMessage("An error occurred. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -146,6 +147,8 @@ export default function RegisterScreen() {
 
                     <View className="flex-row bg-slate-100 rounded-2xl p-1">
 
+
+
                         {/* Blind User */}
                         <TouchableOpacity
                             onPress={() => setRole("blindUser")}
@@ -211,6 +214,13 @@ export default function RegisterScreen() {
 
                     </View>
                 </View>
+
+                {/* Inline Error Message */}
+                {errorMessage ? (
+                    <View className="bg-red-100 border border-red-400 rounded-lg px-4 py-2 mb-4">
+                        <Text className="text-red-700 text-center text-sm">{errorMessage}</Text>
+                    </View>
+                ) : null}
 
                 {/* Create Account Button */}
                 <TouchableOpacity

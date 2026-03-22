@@ -4,7 +4,7 @@ const HAT_IP = "10.42.0.1";
 
 const api = axios.create({
     baseURL: `http://${HAT_IP}:5000`,
-    timeout: 2000
+    timeout: 5000
 });
 
 export const getHatStatus = async () => {

@@ -114,7 +114,7 @@ export function startFallMonitoring(userId: string) {
 
     fallInterval = setInterval(() => {
         sendFallAlert(userId);
-    }, 3000); // check every 3 seconds
+    }, 5000); // check every 5 seconds
 }
 
 // Stop automatic fall monitoring

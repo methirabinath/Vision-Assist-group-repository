@@ -11,16 +11,19 @@ export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     //  Handle Login
     const handleLogin = async () => {
         if (!email || !password) {
+            setErrorMessage("Please fill all the fields");
             Alert.alert("Validation", "Please fill all the fields");
             return;
         }
 
         try {
             setLoading(true);
+            setErrorMessage("");
 
             const response = await fetch(`${BASE_URL}/api/auth/login`, {
                 method: "POST",
@@ -33,7 +36,7 @@ export default function LoginScreen() {
             const data = await response.json();
 
             if (!response.ok || !data?.token) {
-                Alert.alert("Login Failed", data?.message || "Invalid credentials");
+                setErrorMessage(data?.message || "Invalid email or password");
                 return;
             }
 
@@ -51,14 +54,14 @@ export default function LoginScreen() {
 
             // Navigate
             if (role === "blindUser") {
-                router.replace("/openVoice");
+                router.push("/openVoice");
             } else {
-                router.replace("/home");
+                router.push("/home");
             }
 
         } catch (error) {
             console.error("Login Error:", error);
-            Alert.alert("Error", "Something went wrong");
+            setErrorMessage("An error occurred. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -134,6 +137,13 @@ export default function LoginScreen() {
                         Forgot Password?
                     </Text>
                 </TouchableOpacity>
+
+                {/* Inline Error Message */}
+                {errorMessage ? (
+                    <View className="bg-red-100 border border-red-400 rounded-lg px-4 py-2 mb-4">
+                        <Text className="text-red-700 text-center text-sm">{errorMessage}</Text>
+                    </View>
+                ) : null}
 
                 {/* Sign In Button */}
                 <TouchableOpacity
