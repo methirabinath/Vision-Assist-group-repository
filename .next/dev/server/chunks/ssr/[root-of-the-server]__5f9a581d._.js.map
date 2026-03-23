@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 22, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/Vinuda/Documents/Projects/SDGP%20Github/mobile-app-admin-panel-frontend-github/app/admin/page.tsx"],"sourcesContent":["export default function AdminDashboard() {\r\n    return (\r\n        <div className=\"min-h-screen bg-white flex flex-col items-center justify-center\">\r\n            <h1 className=\"text-2xl font-bold\">Admin Dashboard</h1>\r\n            <p className=\"text-gray-600\">Welcome to the admin panel.</p>\r\n        </div>\r\n    );\r\n}"],"names":[],"mappings":";;;;;;AAAe,SAAS;IACpB,qBACI,8OAAC;QAAI,WAAU;;0BACX,8OAAC;gBAAG,WAAU;0BAAqB;;;;;;0BACnC,8OAAC;gBAAE,WAAU;0BAAgB;;;;;;;;;;;;AAGzC"}}]
+}
