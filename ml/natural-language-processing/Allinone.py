@@ -82,6 +82,10 @@ def extract_destination(text):
     # Added \b for word boundaries and made the phrases more flexible
     patterns = [
         r"take me to\s+(.+)",
+        r"say me the way to\s+(.+)",
+        r"show me the way to\s+(.+)",
+        r"take me towards\s+(.+)",
+        r"lead me to\s+(.+)",
         r"go to\s+(.+)",
         r"navigate to\s+(.+)",
         r"guide me to\s+(.+)",
