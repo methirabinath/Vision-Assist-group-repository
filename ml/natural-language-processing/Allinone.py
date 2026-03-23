@@ -34,7 +34,19 @@ def speak(text):
     engine.say(text)
     engine.runAndWait()
 
-
+def check_stop_command(text):
+    stop_phrases = [
+        "stop",
+        "cancel",
+        "exit",
+        "stop navigation",
+        "cancel navigation"
+    ]
+    
+    for phrase in stop_phrases:
+        if phrase in text.lower():
+            return True
+    return False
 # -----------------------------
 # Load Vosk Model
 # -----------------------------
@@ -104,6 +116,7 @@ def extract_destination(text):
 
 # Test it
 print(extract_destination("Navigate to 123 Main St.")) # Output: 123 Main St
+
 
 
 # -----------------------------
