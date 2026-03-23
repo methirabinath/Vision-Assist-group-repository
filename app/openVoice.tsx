@@ -7,7 +7,7 @@ import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from 'react';
 import { Alert, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { getHatStatus } from "../services/hatApi";
-import { startBlindUserTracking, startFallMonitoring, stopBlindUserTracking, stopFallMonitoring } from './locationSender';
+import { startBlindUserTracking, startFallMonitoring, stopBlindUserTracking, stopFallMonitoring } from '../services/locationSender';
 
 const NAVIGATION_API_URL = "http://192.168.1.5:5000/navigate";
 const OPENAI_API_KEY = process.env.EXPO_PUBLIC_OPENAI_API_KEY;
