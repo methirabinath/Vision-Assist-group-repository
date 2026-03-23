@@ -69,7 +69,6 @@ def log_command(text):
     with open("voice_log.txt", "a") as f:
         f.write(text + "\n")
 
-Then inside loop:
 # -----------------------------
 # Extract Destination
 # -----------------------------
@@ -183,6 +182,9 @@ def listen_for_command():
                         speak("Please say your destination clearly.")
                         is_awake = False
                         #Asking for the destination again
+
+                    if text:
+                        log_command(text)
 
 
 # -----------------------------
