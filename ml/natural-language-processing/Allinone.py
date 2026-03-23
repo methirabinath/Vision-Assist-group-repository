@@ -65,7 +65,11 @@ def audio_callback(indata, frames, time, status):
         print(status, file=sys.stderr)
     q.put(bytes(indata))
 
+def log_command(text):
+    with open("voice_log.txt", "a") as f:
+        f.write(text + "\n")
 
+Then inside loop:
 # -----------------------------
 # Extract Destination
 # -----------------------------
