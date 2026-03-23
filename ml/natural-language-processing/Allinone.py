@@ -14,7 +14,7 @@ import os
 
 MODEL_PATH = "vosk-model-small-en-us-0.15/vosk-model-small-en-us-0.15"
 SAMPLE_RATE = 16000
-WAKE_WORD = "hello"
+WAKE_WORD = ["hello", "Hey Vision", "Hello Vision", "Hey", "Vision"]  
 
 is_awake = False
 
