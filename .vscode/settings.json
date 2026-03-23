@@ -1,0 +1,11 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit",
+    "source.sortMembers": "explicit"
+  },
+  "files.exclude": {
+    "**/router.d.ts": true,
+    "**/expo-env.d.ts": true
+  }
+}
