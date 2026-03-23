@@ -73,24 +73,6 @@ def log_command(text):
 # Extract Destination
 # -----------------------------
 
-"""def extract_destination(text):
-    patterns = [
-        r"take me to (.+)",
-        r"go to (.+)",
-        r"navigate to (.+)",
-        r"guide me to (.+)",
-        r"bring me to (.+)"
-    ]
-    
-    text = text.lower()
-    
-    for pattern in patterns:
-        match = re.search(pattern, text)
-        if match:
-            return match.group(1).strip()
-    
-    return None"""
-
 import re
 
 def extract_destination(text):
