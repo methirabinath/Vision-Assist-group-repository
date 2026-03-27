@@ -1,16 +1,12 @@
 "use client";
+
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 // Define icons
 const Icons = {
     Dashboard: () => (
-        <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-        >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -20,12 +16,7 @@ const Icons = {
         </svg>
     ),
     Users: () => (
-        <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-        >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -34,28 +25,8 @@ const Icons = {
             />
         </svg>
     ),
-    Payments: () => (
-        <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-        >
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-            />
-        </svg>
-    ),
     Settings: () => (
-        <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-        >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -70,31 +41,43 @@ const Icons = {
             />
         </svg>
     ),
+    Logout: () => (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+        </svg>
+    ),
 };
 
 export default function Sidebar() {
     const pathname = usePathname();
+    const router = useRouter();
 
     const menuItems = [
         { label: "Dashboard", href: "/admin", icon: <Icons.Dashboard /> },
         { label: "User Management", href: "/admin/users", icon: <Icons.Users /> },
-        {
-            label: "Transactions",
-            href: "/admin/payments",
-            icon: <Icons.Payments />,
-        },
         { label: "Settings", href: "/admin/settings", icon: <Icons.Settings /> },
     ];
 
+    const handleLogout = () => {
+        // Remove admin token from localStorage
+        localStorage.removeItem("admin_token");
+
+        // Redirect to login page
+        router.push("/");
+    };
+
     return (
         <aside className="w-64 min-h-screen bg-white border-r border-gray-200 flex flex-col">
-            {/* Header section */}
+            {/* Header */}
             <div className="px-6 py-5 border-b border-gray-200">
                 <div className="flex items-center gap-3">
                     <div>
-                        <h1 className="text-lg font-semibold text-gray-900">
-                            VisionAssist
-                        </h1>
+                        <h1 className="text-lg font-semibold text-gray-900">VisionAssist</h1>
                         <p className="text-xs text-gray-500">Admin Workspace</p>
                     </div>
                 </div>
@@ -102,7 +85,6 @@ export default function Sidebar() {
 
             {/* Navigation */}
             <nav className="flex-1 px-4 py-6">
-                {/* Section Label */}
                 <div className="px-3 mb-3">
                     <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Main Menu
@@ -125,11 +107,7 @@ export default function Sidebar() {
                                         }
                   `}
                                 >
-                                    <span
-                                        className={`
-                    ${isActive ? "text-blue-600" : "text-gray-400"}
-                  `}
-                                    >
+                                    <span className={`${isActive ? "text-blue-600" : "text-gray-400"}`}>
                                         {item.icon}
                                     </span>
                                     <span>{item.label}</span>
@@ -137,21 +115,19 @@ export default function Sidebar() {
                             </li>
                         );
                     })}
+
+                    {/* Logout button inside the menu */}
+                    <li>
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg font-medium text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition"
+                        >
+                            <Icons.Logout />
+                            <span>Logout</span>
+                        </button>
+                    </li>
                 </ul>
             </nav>
-
-            {/* Footer section */}
-            <div className="px-6 py-4 border-t border-gray-200">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                        <span className="text-sm font-semibold text-blue-700">AD</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">Admin</p>
-                        <p className="text-xs text-gray-500 truncate">admin@visionassist.com</p>
-                    </div>
-                </div>
-            </div>
         </aside>
     );
 }
