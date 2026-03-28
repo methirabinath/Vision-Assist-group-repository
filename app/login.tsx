@@ -13,6 +13,21 @@ export default function LoginScreen() {
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
+    const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+    const fetchWithRetry = async (url: string, options: any, retries = 3) => {
+        for (let i = 0; i < retries; i++) {
+            try {
+                const response = await fetch(url, options);
+                return response;
+            } catch (err) {
+                console.log(`Retry ${i + 1}...`);
+                await delay(4000); // wait 4 seconds before retry
+            }
+        }
+        throw new Error("Server not reachable");
+    };
+
     //  Handle Login
     const handleLogin = async () => {
         if (!email || !password) {
@@ -23,15 +38,18 @@ export default function LoginScreen() {
 
         try {
             setLoading(true);
-            setErrorMessage("");
+            setErrorMessage("Connecting to server... please wait ⏳");
 
-            const response = await fetch(`${BASE_URL}/api/auth/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ email, password })
-            });
+            const response = await fetchWithRetry(
+                `${BASE_URL}/api/auth/login`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ email, password }),
+                }
+            );
 
             const data = await response.json();
 
@@ -40,20 +58,14 @@ export default function LoginScreen() {
                 return;
             }
 
-            await AsyncStorage.setItem(
-                "authToken",
-                data.token.trim()
-            );
-            const role = data.role;
-
-            // Store role
-            await AsyncStorage.setItem("userRole", role);
+            await AsyncStorage.setItem("authToken", data.token.trim());
+            await AsyncStorage.setItem("userRole", data.role);
 
             console.log("JWT Token Stored ✅");
-            console.log("User Role:", role);
+            console.log("User Role:", data.role);
 
             // Navigate
-            if (role === "blindUser") {
+            if (data.role === "blindUser") {
                 router.replace("/openVoice");
             } else {
                 router.replace("/home");
@@ -61,7 +73,11 @@ export default function LoginScreen() {
 
         } catch (error) {
             console.error("Login Error:", error);
-            setErrorMessage("An error occurred. Please try again.");
+
+            setErrorMessage(
+                "Cannot connect to server. Please wait a few seconds and try again."
+            );
+
         } finally {
             setLoading(false);
         }
