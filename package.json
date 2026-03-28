@@ -59,7 +59,7 @@
   "devDependencies": {
     "@types/jwt-decode": "^2.2.1",
     "@types/react": "~19.2.10",
-    "babel-preset-expo": "^55.0.14-canary-20260328-2049187",
+    "babel-preset-expo": "^55.0.9",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~55.0.0",
     "react-native-reanimated": "4.2.1",
