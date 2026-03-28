@@ -1,9 +1,9 @@
 // firebase.ts
-import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
+// ❌ remove analytics import OR keep it conditionally
+// import { getAnalytics } from "firebase/analytics";
 
-// Firebase config from environment variables
 const firebaseConfig = {
     apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
     authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -15,9 +15,10 @@ const firebaseConfig = {
     measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Export Realtime Database and Analytics
+// ✅ Database works fine
 export const db = getDatabase(app);
-export const analytics = getAnalytics(app);
+
+// ❌ DO NOT use analytics in Expo (recommended)
+// export const analytics = getAnalytics(app);

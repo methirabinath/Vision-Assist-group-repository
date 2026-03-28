@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Audio } from 'expo-av';
+// import { Audio } from 'expo-av';
 import { useRouter } from 'expo-router';
 import * as Speech from 'expo-speech';
 import { jwtDecode } from "jwt-decode";
@@ -141,48 +141,48 @@ export default function VoiceOpen() {
 
 
     // toggle listening (start/stop recording)
-    const toggleListening = async () => {
-        try {
-            if (isListening && recording) {
+    // const toggleListening = async () => {
+    //     try {
+    //         if (isListening && recording) {
 
-                // 🔥 ensure minimum recording time
-                await new Promise(res => setTimeout(res, 1500));
+    //             // 🔥 ensure minimum recording time
+    //             await new Promise(res => setTimeout(res, 1500));
 
-                await recording.stopAndUnloadAsync();
-                const uri = recording.getURI();
+    //             await recording.stopAndUnloadAsync();
+    //             const uri = recording.getURI();
 
-                console.log("Recorded file:", uri);
+    //             console.log("Recorded file:", uri);
 
-                setRecording(null);
-                setIsListening(false);
+    //             setRecording(null);
+    //             setIsListening(false);
 
-                if (uri) await handleVoiceCommand(uri);
+    //             if (uri) await handleVoiceCommand(uri);
 
-            } else {
+    //         } else {
 
-                await Audio.requestPermissionsAsync();
+    //             await Audio.requestPermissionsAsync();
 
-                await Audio.setAudioModeAsync({
-                    allowsRecordingIOS: true,
-                    playsInSilentModeIOS: true,
-                });
+    //             await Audio.setAudioModeAsync({
+    //                 allowsRecordingIOS: true,
+    //                 playsInSilentModeIOS: true,
+    //             });
 
-                const rec = new Audio.Recording();
+    //             const rec = new Audio.Recording();
 
-                await rec.prepareToRecordAsync(
-                    Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
-                );
+    //             await rec.prepareToRecordAsync(
+    //                 Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+    //             );
 
-                await rec.startAsync();
+    //             await rec.startAsync();
 
-                setRecording(rec);
-                setIsListening(true);
-            }
+    //             setRecording(rec);
+    //             setIsListening(true);
+    //         }
 
-        } catch (e) {
-            console.log("Recording error:", e);
-        }
-    };
+    //     } catch (e) {
+    //         console.log("Recording error:", e);
+    //     }
+    // };
 
 
     // handle voice command
