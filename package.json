@@ -41,7 +41,7 @@
     "expo-web-browser": "~55.0.10",
     "firebase": "^12.9.0",
     "jwt-decode": "^4.0.0",
-    "nativewind": "^4.2.1",
+    "nativewind": "^4.2.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-native": "0.83.2",
@@ -59,7 +59,7 @@
   "devDependencies": {
     "@types/jwt-decode": "^2.2.1",
     "@types/react": "~19.2.10",
-    "babel-preset-expo": "^55.0.9",
+    "babel-preset-expo": "^55.0.13",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~55.0.0",
     "react-native-reanimated": "4.2.1",
